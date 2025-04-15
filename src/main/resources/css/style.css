@@ -1,0 +1,129 @@
+/* === Palette lavande très claire === */
+.lavande-bg {
+    -fx-background-color: #f3e8ff;
+}
+
+/* === TableView Stylisée === */
+.modern-table {
+    -fx-background-color: white;
+    -fx-border-color: #dddddd;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-table-cell-border-color: transparent;
+    -fx-font-size: 13px;
+    -fx-padding: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(106, 90, 205, 0.1), 8, 0.2, 0, 4);
+    -fx-selection-bar: #dcd6f7;
+    -fx-selection-bar-non-focused: #e0e0e0;
+}
+
+.modern-table .column-header-background {
+    -fx-background-color: #e0cffe;
+}
+
+.modern-table .column-header {
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER_LEFT;
+    -fx-text-fill: #4b0082;
+}
+
+.modern-table .table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.modern-table .table-row-cell:hover {
+    -fx-background-color: #f3efff;
+}
+
+/* === Bouton Moderne === */
+.modern-btn {
+    -fx-background-color: #6a5acd;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10px;
+    -fx-padding: 10 20 10 20;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 6, 0.3, 0, 4);
+}
+
+.modern-btn:hover {
+    -fx-background-color: #836fff;
+}
+
+/* === Bouton Ajouter === */
+.ajouter-btn {
+    -fx-background-color: #6a5acd;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 8 16;
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(one-pass-box, rgba(0,0,0,0.3), 4, 0, 2, 2);
+}
+
+/* === Bouton Modifier === */
+.modifier-btn {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+/* === Bouton Supprimer === */
+.supprimer-btn {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 4, 0.3, 0, 2);
+}
+
+.supprimer-btn:hover {
+    -fx-background-color: #ff6b61;
+}
+
+/* === Bouton secondaire === */
+.modern-btn-secondary {
+    -fx-background-color: #dcd6f7;
+    -fx-text-fill: #4b0082;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10px;
+    -fx-padding: 10 20 10 20;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 6, 0.3, 0, 3);
+}
+
+.modern-btn-secondary:hover {
+    -fx-background-color: #f1edff;
+}
+
+/* === Champs de saisie stylisés === */
+.custom-field {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d8b4fe;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 8px;
+    -fx-font-size: 14px;
+    -fx-effect: dropshadow(gaussian, rgba(106, 90, 205, 0.1), 6, 0.2, 0, 3);
+}
+
+.custom-field:hover {
+    -fx-border-color: #b794f4;
+}
+
+/* === TableView : Arrondi des colonnes === */
+.table-view .column-header, .table-view .filler {
+    -fx-background-radius: 12px 12px 0 0;
+}
+.modern-btn-secondary {
+    -fx-background-color: #e0e0f8;
+    -fx-text-fill: #4b0082;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+}

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="tn.esprit.controllers.AfficherPaiement"
+            prefHeight="500.0" prefWidth="800.0"
+            style="-fx-background-color: #F5F0FF; -fx-padding: 20;">
+
+    <children>
+
+        <!-- Titre -->
+        <Label text="💳 Liste des Paiements"
+               layoutX="20.0" layoutY="10.0"
+               style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #4A235A;" />
+
+        <!-- Tableau des paiements -->
+        <TableView fx:id="tablePaiements"
+                   layoutX="20.0" layoutY="50.0"
+                   prefHeight="300.0" prefWidth="760.0">
+            <columns>
+                <TableColumn fx:id="colOffre" text="📦 Offre" prefWidth="200"/>
+                <TableColumn fx:id="colUtilisateur" text="👤 Utilisateur" prefWidth="200"/>
+                <TableColumn fx:id="colDate" text="📅 Date de paiement" prefWidth="180"/>
+                <TableColumn fx:id="colAction" text="⚙️ Action" prefWidth="160"/>
+            </columns>
+        </TableView>
+
+
+        <!-- Bouton Retour -->
+        <Button text="🔙 Voir les Offres"
+                layoutX="20.0" layoutY="430.0"
+                style="-fx-font-size: 14px; -fx-background-color: #6a5acd; -fx-text-fill: white;"
+                onAction="#allerVersOffre"/>
+
+    </children>
+</AnchorPane>
