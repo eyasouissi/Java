@@ -1,0 +1,232 @@
+/* post-styles.css */
+.create-post-container {
+    -fx-background-color: white; /* Background color */
+    -fx-background-radius: 12px; /* Rounded corners */
+    -fx-border-color: #e6e6e6; /* Light border color */
+    -fx-border-width: 1px; /* Border width */
+    -fx-padding: 20px; /* Padding inside the container */
+    -fx-spacing: 15px; /* Space between the child elements */
+    -fx-alignment: top-center; /* Align children to the top */
+    -fx-max-width: 600px; /* Max width for the container */
+    -fx-min-width: 350px; /* Min width to avoid shrinking too much */
+    -fx-pref-width: 100%; /* Make it take full available width */
+    -fx-min-height: 300px; /* Minimum height */
+}
+
+.create-post-container .post-input {
+    -fx-background-color: #f1f3f5; /* Light gray background */
+    -fx-background-radius: 8px; /* Rounded corners */
+    -fx-border-color: #d0d0d0; /* Light border */
+    -fx-border-width: 1px; /* Border width */
+    -fx-padding: 10px; /* Padding inside the text area */
+    -fx-pref-height: 120px; /* Set a preferred height */
+    -fx-text-fill: #333; /* Dark text color */
+    -fx-min-height: 120px; /* Minimum height */
+    -fx-max-height: 300px; /* Maximum height for the text area */
+}
+
+.create-post-container .submit-post-btn {
+    -fx-background-color: #70a2e1; /* Green button */
+    -fx-text-fill: white; /* White text */
+    -fx-background-radius: 8px; /* Rounded corners */
+    -fx-padding: 10px 20px; /* Padding inside the button */
+    -fx-border-color: #70a2e1; /* Same color as background */
+    -fx-border-radius: 8px; /* Rounded border */
+    -fx-cursor: hand; /* Hand cursor on hover */
+}
+
+.create-post-container .submit-post-btn:hover {
+    -fx-background-color: #8c84a1; /* Darker green when hovered */
+}
+
+.create-post-container .media-btn {
+    -fx-background-color: #f0f0f0; /* Light gray button */
+    -fx-text-fill: #333; /* Dark text color */
+    -fx-background-radius: 8px; /* Rounded corners */
+    -fx-padding: 10px 20px; /* Padding inside the button */
+    -fx-border-color: #d0d0d0; /* Light border */
+    -fx-border-radius: 8px; /* Rounded border */
+}
+
+.create-post-container .media-btn:hover {
+    -fx-background-color: #e0e0e0; /* Darker gray on hover */
+}
+
+
+/* Regular state */
+.header-container {
+    -fx-background-color: #8c84a1; /* Regular background color */
+    -fx-padding: 20;
+    -fx-spacing: 20;
+    -fx-alignment: center-left;
+    -fx-background-radius: 20px; /* Bubbly rounded edges */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.5, 0, 0); /* Optional shadow effect */
+    -fx-border-radius: 20px; /* Rounded border */
+    -fx-border-width: 1px;
+    -fx-border-color: #cec5d5; /* Slightly darker border color for emphasis */
+}
+
+
+
+
+.header-title {
+    -fx-fill: white;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.header-subtitle {
+    -fx-fill: white;
+    -fx-font-size: 14px;
+}
+
+.create-post-container {
+    -fx-background-color: white;
+    -fx-padding: 15;
+    -fx-spacing: 10;
+    -fx-border-radius: 8;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5,0,0,0);
+}
+
+.post-input {
+    -fx-min-height: 100;
+    -fx-wrap-text: true;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 4;
+}
+
+.media-btn {
+    -fx-background-color: #e9ecef;
+    -fx-text-fill: #495057;
+}
+
+.submit-post-btn {
+    -fx-background-color: #8c84a1;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.posts-list {
+    -fx-background-color: transparent;
+}
+
+.post-card {
+    -fx-background-color: white;
+    -fx-padding: 15;
+    -fx-border-radius: 8;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 5,0,0,0);
+}
+/* Styling for post container */
+.post-card {
+    -fx-background-color: #f4f4f4;
+    -fx-padding: 10;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0, 2, 2);
+}
+
+/* Styling for post content */
+.post-content {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-fill: #333;
+}
+
+/* Styling for post creation date */
+.post-date {
+    -fx-font-size: 14px;
+    -fx-fill: #777;
+}
+
+/* Styling for action buttons */
+.action-button {
+    -fx-background-color: transparent;
+    -fx-border: none;
+    -fx-cursor: hand;
+    -fx-padding: 5;
+}
+
+.action-button:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 5, 0, 2, 2);
+}
+
+/* Styling for HBox actions */
+.hbox {
+    -fx-alignment: center;
+    -fx-spacing: 10;
+}
+
+/* Add these styles to your CSS */
+.media-btn {
+    -fx-background-color: #4a90e2;
+    -fx-text-fill: white;
+    -fx-padding: 5 15;
+}
+
+.media-btn:hover {
+    -fx-background-color: #3a7bc8;
+}
+
+.photos-flow-pane {
+    -fx-padding: 10;
+    -fx-background-color: #f5f5f5;
+    -fx-border-radius: 5;
+    -fx-border-color: #ddd;
+}
+.photo-thumbnail {
+    -fx-alignment: center;
+    -fx-padding: 5;
+    -fx-border-color: lightgray;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-background-color: #f8f8f8;
+}
+
+.remove-photo-btn {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-radius: 5;
+    -fx-cursor: hand;
+}
+/* Input validation styles */
+.text-area.error {
+    -fx-border-color: #ff4444;
+    -fx-border-width: 2px;
+    -fx-border-radius: 3px;
+}
+
+.label.error {
+    -fx-text-fill: #ff4444;
+    -fx-font-weight: bold;
+}
+
+/* Remove photo button style */
+.remove-photo-btn {
+    -fx-background-color: #ff4444;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 2 5;
+}
+
+.remove-photo-btn:hover {
+    -fx-background-color: #cc0000;
+}
+.text-field-error {
+    -fx-border-color: #3b82f6; /* Tailwind-style blue */
+    -fx-border-width: 2px;
+    -fx-background-color: #e0f2fe;
+    -fx-focus-color: #3b82f6;
+    -fx-faint-focus-color: transparent;
+}
+
+.label.error {
+    -fx-text-fill: #ff4444;
+    -fx-font-weight: bold;
+}
+.forum-title {
+    -fx-font-size: 25px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333; /* light black */
+    -fx-font-family: "Poppins", sans-serif;
+}
