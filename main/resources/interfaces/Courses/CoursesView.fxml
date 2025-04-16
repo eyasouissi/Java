@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<HBox xmlns="http://javafx.com/javafx/11.0.1"
+      prefWidth="1000" prefHeight="700"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="tn.esprit.controllers.Courses.CoursesController"
+      spacing="0"
+      stylesheets="@../../css/Sidebar.css">
+
+    <fx:include fx:id="sidebar" source="/interfaces/Admin/Sidebar.fxml"/>
+
+    <!-- Contenu principal -->
+    <VBox spacing="15" style="-fx-padding: 25; -fx-background-color: #f9f9f9;" HBox.hgrow="ALWAYS">
+        <!-- En-tête -->
+        <HBox alignment="CENTER_LEFT" spacing="15">
+            <Button text="← Retour aux Categories" onAction="#navigateToCoursesView"
+                    style="-fx-background-color: #607D8B; -fx-text-fill: white; -fx-font-weight: bold;"/>
+            <Label text="Gestion des Cours"
+                   style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+        </HBox>
+
+        <!-- Barre d'outils -->
+        <HBox spacing="15" style="-fx-padding: 10;">
+            <Button text="Ajouter" onAction="#showAddCourseView"
+                    style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+            <Button text="Tous les cours" onAction="#showListCourses"
+                    style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+            <Button text="Publiés" onAction="#showPublishedCourses"
+                    style="-fx-background-color: #FF9800; -fx-text-fill: white;"/>
+        </HBox>
+
+        <!-- Filtres -->
+        <HBox spacing="15" style="-fx-padding: 10;">
+            <Label text="Filtrer par:" style="-fx-text-fill: #555;"/>
+            <ComboBox fx:id="categoryFilterCombo" promptText="Toutes catégories"
+                      style="-fx-pref-width: 200;"/>
+            <CheckBox fx:id="premiumFilterCheck" text="Premium uniquement"
+                      style="-fx-padding: 0 10 0 0;"/>
+        </HBox>
+
+        <!-- Liste des cours -->
+        <ListView fx:id="coursesListView" VBox.vgrow="ALWAYS">
+            <placeholder>
+                <VBox alignment="CENTER" spacing="10">
+                    <Label text="Aucun cours disponible" style="-fx-text-fill: #777;"/>
+                    <Label text="Utilisez les boutons ci-dessus pour charger les cours"
+                           style="-fx-text-fill: #aaa; -fx-font-size: 11px;"/>
+                </VBox>
+            </placeholder>
+        </ListView>
+
+        <!-- Actions contextuelles -->
+        <HBox fx:id="actionButtonsBox" spacing="15" style="-fx-padding: 10;" visible="false">
+            <Button text="Modifier" onAction="#showEditCourseView"
+                    style="-fx-background-color: #9C27B0; -fx-text-fill: white;"/>
+            <Button text="Supprimer" onAction="#deleteCourse"
+                    style="-fx-background-color: #F44336; -fx-text-fill: white;"/>
+            <Button text="Détails" onAction="#showCourseDetails"
+                    style="-fx-background-color: #607D8B; -fx-text-fill: white;"/>
+        </HBox>
+    </VBox>
+</HBox>
