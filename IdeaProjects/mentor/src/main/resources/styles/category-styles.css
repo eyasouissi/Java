@@ -1,0 +1,113 @@
+/* Styles généraux */
+.main-content {
+    -fx-background-color: #f9f9f9;
+    -fx-padding: 20px;
+}
+
+/* En-tête */
+.header-box {
+    -fx-alignment: CENTER_LEFT;
+    -fx-spacing: 15px;
+    -fx-padding: 0 0 15px 0;
+}
+
+.title-label {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+}
+
+.back-button {
+    -fx-background-color: #607D8B;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 15px;
+    -fx-background-radius: 5px;
+}
+
+/* Barre d'outils */
+.toolbar {
+    -fx-spacing: 15px;
+    -fx-padding: 0 0 15px 0;
+}
+
+.add-button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-padding: 8px 15px;
+    -fx-background-radius: 5px;
+}
+
+.refresh-button {
+    -fx-background-color: #2196F3;
+    -fx-text-fill: white;
+    -fx-padding: 8px 15px;
+    -fx-background-radius: 5px;
+}
+
+/* Liste moderne */
+.modern-list {
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-padding: 5px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 1);
+}
+
+.modern-list .list-cell {
+    -fx-padding: 15px;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #f5f5f5 transparent;
+    -fx-border-width: 1px;
+}
+
+.modern-list .list-cell:hover {
+    -fx-background-color: #f8f9fa;
+    -fx-cursor: hand;
+}
+
+.modern-list .list-cell:filled:selected {
+    -fx-background-color: #f3e5f5;
+    -fx-text-fill: #8c84a1;
+}
+
+/* État vide */
+.empty-state {
+    -fx-alignment: CENTER;
+    -fx-spacing: 15px;
+    -fx-padding: 40px;
+}
+
+.empty-icon {
+    -fx-image: url("/interfaces/Category/images/default-icon.png");
+    -fx-fit-width: 80px;
+    -fx-fit-height: 80px;
+    -fx-preserve-ratio: true;
+}
+
+.empty-text {
+    -fx-text-fill: #6c757d;
+    -fx-font-size: 16px;
+    -fx-font-weight: 500;
+}
+
+.empty-subtext {
+    -fx-text-fill: #adb5bd;
+    -fx-font-size: 12px;
+}
+
+/* Scrollbar */
+.modern-list .scroll-bar:vertical {
+    -fx-pref-width: 8px;
+}
+
+.modern-list .scroll-bar .thumb {
+    -fx-background-color: #d8d8d8;
+    -fx-background-radius: 4px;
+}
+
+.modern-list .scroll-bar .track {
+    -fx-background-color: #f8f9fa;
+}

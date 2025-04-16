@@ -1,0 +1,28 @@
+/* Style de base */
+.list-cell:filled:selected {
+    -fx-background-color: #E1BEE7;
+    -fx-text-fill: #4A148C;
+}
+
+.list-cell:odd {
+    -fx-background-color: #f5f5f5;
+}
+
+.list-cell:even {
+    -fx-background-color: white;
+}
+
+/* Style des boutons */
+.button {
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);
+}
+
+.button:hover {
+    -fx-opacity: 0.9;
+}
+
+/* Style des combobox */
+.combo-box {
+    -fx-pref-width: 150;
+}

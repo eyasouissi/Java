@@ -1,0 +1,108 @@
+/* Base Styles */
+.root {
+    -fx-background-color: #F8F7FC;
+    -fx-font-family: "Poppins";
+}
+
+/* Hero Section */
+.hero-pane {
+    -fx-background-color: linear-gradient(to right, #8C84A1, #A89BB9);
+    -fx-padding: 40px;
+}
+
+.hero-title {
+    -fx-text-fill: white;
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+}
+
+.hero-subtitle {
+    -fx-text-fill: #F0EEF5;
+    -fx-font-size: 16px;
+}
+
+/* Carousel Container */
+.categories-container {
+    -fx-padding: 30px;
+    -fx-spacing: 20px;
+    -fx-alignment: center;
+}
+
+.carousel-container {
+    -fx-spacing: 20px;
+    -fx-alignment: center;
+    -fx-padding: 10px;
+}
+
+/* Category Cards */
+.category-card {
+    -fx-background-color: white;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);
+    -fx-padding: 15px;
+    -fx-spacing: 10px;
+    -fx-alignment: top-center;
+}
+
+.category-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 15, 0, 0, 3);
+    -fx-translate-y: -5px;
+}
+
+.category-image {
+    -fx-background-radius: 8px 8px 0 0;
+}
+
+.category-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #6A5D7B;
+}
+
+.category-desc {
+    -fx-font-size: 14px;
+    -fx-text-fill: #A89BB9;
+    -fx-wrap-text: true;
+}
+
+.view-button {
+    -fx-background-color: #8C84A1;
+    -fx-text-fill: white;
+    -fx-background-radius: 20px;
+    -fx-padding: 8px 20px;
+}
+
+.view-button:hover {
+    -fx-background-color: #7A728F;
+}
+
+/* Navigation Buttons */
+.nav-buttons {
+    -fx-alignment: center;
+    -fx-spacing: 20px;
+    -fx-padding: 10px;
+}
+
+.nav-button {
+    -fx-background-radius: 50%;
+    -fx-min-width: 40px;
+    -fx-min-height: 40px;
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
+
+.nav-button:hover {
+    -fx-background-color: #F0EEF5;
+}
+
+.nav-button .ikonli-font-icon {
+    -fx-icon-color: #8C84A1;
+    -fx-icon-size: 20px;
+}
+
+/* Empty State */
+.no-categories-label {
+    -fx-text-fill: #6A5D7B;
+    -fx-font-size: 16px;
+    -fx-padding: 20px;
+}
