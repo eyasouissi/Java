@@ -1,21 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.controllers.frontOffre"
-            style="-fx-background-color: #f3e8ff;">
-    <VBox layoutX="50.0" layoutY="30.0" spacing="20" prefWidth="900"
-          AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
-          AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
-          alignment="TOP_CENTER">
-        <Label text="Nos Offres"
-               style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #4b0082;" />
-        <Label text="Choisissez l'abonnement qui vous convient et profitez de nos services exclusifs"
-               style="-fx-font-size: 18px; -fx-font-weight: normal; -fx-text-fill: #4b0082;" />
-        <HBox fx:id="offersContainer" spacing="20" alignment="CENTER"
-              style="-fx-padding: 20px;" />
-    </VBox>
-</AnchorPane>
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="tn.esprit.controllers.frontOffre"
+            stylesheets="@/css/style.css">
+
+    <!-- Header -->
+    <top>
+        <HBox spacing="20" alignment="CENTER_LEFT" styleClass="header-bar" style="-fx-padding: 10;">
+            <Label text="🏠 Mentor" styleClass="header-title" />
+            <Button fx:id="btnHome" text="Home" onAction="#goHome" styleClass="header-button" />
+            <Button fx:id="btnAbout" text="About" onAction="#goAbout" styleClass="header-button" />
+            <Button fx:id="btnForum" text="Forum" onAction="#goForum" styleClass="header-button" />
+            <Region fx:id="spacer" HBox.hgrow="ALWAYS" />
+            <Button fx:id="profileBtn" text="Profile" styleClass="btn-getstarted" />
+        </HBox>
+    </top>
+
+    <!-- Body -->
+    <center>
+        <VBox spacing="20" alignment="TOP_CENTER" style="-fx-padding: 20;">
+            <Label text="Nos Offres" styleClass="section-title" />
+            <Label text="Choisissez l'abonnement qui vous convient et profitez de nos services exclusifs"
+                   styleClass="section-subtitle" />
+            <HBox fx:id="offersContainer"
+                  spacing="20"
+                  alignment="CENTER"
+                  style="-fx-padding: 10;" />
+        </VBox>
+    </center>
+
+    <!-- Footer -->
+    <bottom>
+        <VBox alignment="CENTER" styleClass="footer-bar" style="-fx-padding: 10;">
+            <Label text="© Mentor - Tous droits réservés." />
+        </VBox>
+    </bottom>
+
+</BorderPane>

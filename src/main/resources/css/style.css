@@ -127,3 +127,191 @@
     -fx-background-radius: 10;
     -fx-cursor: hand;
 }
+/* Style pour le bouton Retour à la liste des offres */
+#btnRetourOffres {
+    -fx-background-color: #8c5e9b; /* Couleur mauve */
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 10px 20px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, #4a2a6b, 10, 0, 0, 5);
+    -fx-transition: background-color 0.3s ease, -fx-background-radius 0.3s ease;
+}
+/* Style pour le bouton Retour à la liste des offres */
+#btnRetourOffres {
+    -fx-background-color: #8c5e9b; /* Couleur mauve */
+    -fx-text-fill: white;
+    -fx-font-size: 12px; /* Réduit la taille de la police */
+    -fx-padding: 5px 10px; /* Réduit la taille du padding */
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, #4a2a6b, 10, 0, 0, 5);
+    -fx-transition: background-color 0.3s ease, -fx-background-radius 0.3s ease;
+}
+
+/* Effet au survol du bouton */
+#btnRetourOffres:hover {
+    -fx-background-color: #9b70a3; /* Couleur mauve plus claire au survol */
+    -fx-background-radius: 10px;
+}
+
+/* Effet au clic du bouton */
+#btnRetourOffres:pressed {
+    -fx-background-color: #734172; /* Couleur encore plus foncée lors du clic */
+}
+/* Cards des offres */
+.offre-card {
+    -fx-background-color: white;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 8, 0.2, 0, 3);
+    -fx-pref-width: 250;
+    -fx-alignment: center;
+}
+
+.offre-card:hover {
+    -fx-background-color: #f8f5ff;
+}
+
+.offre-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4b0082;
+}
+
+.offre-subtitle {
+    -fx-font-size: 15px;
+    -fx-text-fill: #6a5acd;
+}
+
+.offre-description {
+    -fx-font-size: 13px;
+    -fx-text-fill: #4b0082;
+    -fx-wrap-text: true;
+}
+
+.btn-subscribe {
+    -fx-background-color: #6a5acd;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-padding: 8 16;
+}
+.header-bar {
+    -fx-background-color: #f0f0ff;
+    -fx-padding: 10 20;
+}
+
+.header-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4b0082;
+}
+
+.section-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4b0082;
+}
+
+.section-subtitle {
+    -fx-font-size: 16px;
+    -fx-text-fill: #6a5acd;
+}
+
+.footer-bar {
+    -fx-background-color: #f3e8ff;
+    -fx-padding: 10;
+}
+
+.btn-getstarted {
+    -fx-background-color: #6a5acd;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+}
+.header-bar {
+    -fx-background-color: #6a5acd;
+}
+
+.header-title {
+    -fx-font-size: 20px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.header-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}
+
+.section-title {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4b0082;
+}
+
+.section-subtitle {
+    -fx-font-size: 16px;
+    -fx-text-fill: #6a5acd;
+}
+
+.footer-bar {
+    -fx-background-color: #eee;
+}
+.paiement-label {
+    -fx-font-size: 20px;
+    -fx-text-fill: #4b0082;
+    -fx-font-weight: bold;
+}
+
+.paiement-subtitle {
+    -fx-font-size: 18px;
+    -fx-text-fill: #6a5acd;
+}
+
+.section-title {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4b0082;
+}
+.modern-table {
+    -fx-font-size: 14px;
+    -fx-background-color: white;
+    -fx-border-radius: 10;
+    -fx-padding: 10;
+    -fx-border-color: #D2B4DE;
+}
+
+.modifier-btn {
+    -fx-background-color: #85C1E9;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+}
+
+.supprimer-btn {
+    -fx-background-color: #E74C3C;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+}
+
+.ajouter-btn {
+    -fx-background-color: #58D68D;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+}
+
+.modern-btn-secondary {
+    -fx-background-color: #BB8FCE;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+}

@@ -107,32 +107,38 @@ public class paiementService implements IServices<Paiement> {
 
     @Override
     public List<Paiement> recuperer() throws SQLException {
-        String sql = "SELECT * FROM paiement";
-        Statement ste = cnx.createStatement();
-        ResultSet rs = ste.executeQuery(sql);
+        String sql = """
+        SELECT p.id_paiement, p.date_paiement,
+               u.id AS user_id, u.name AS user_nom,
+               o.id_offre AS offre_id, o.nom_offre AS offre_nom
+        FROM paiement p
+        JOIN user u ON p.id_user = u.id
+        JOIN offre o ON p.id_offre = o.id_offre
+    """;
+
         List<Paiement> paiements = new ArrayList<>();
+        Statement st = cnx.createStatement();
+        ResultSet rs = st.executeQuery(sql);
 
         while (rs.next()) {
-            int id = rs.getInt("id_paiement");
-            int userId = rs.getInt("id_user");
-            int offreId = rs.getInt("id_offre");
-            Timestamp datePaiementTimestamp = rs.getTimestamp("date_paiement");
-
-            LocalDateTime datePaiement = (datePaiementTimestamp != null) ? datePaiementTimestamp.toLocalDateTime() : null;
-
             User user = new User();
-            user.setId((long) userId);
+            user.setId(rs.getLong("user_id"));
+            user.setName(rs.getString("user_nom"));
 
             Offre offre = new Offre();
-            offre.setId((long) offreId);
+            offre.setId(rs.getLong("offre_id"));
+            offre.setName(rs.getString("offre_nom"));
 
-            Paiement paiement = new Paiement(user, offre, datePaiement);
-            paiement.setId((long) id);
+            Paiement paiement = new Paiement(user, offre,
+                    rs.getTimestamp("date_paiement").toLocalDateTime());
+            paiement.setId(rs.getLong("id_paiement"));
+
             paiements.add(paiement);
         }
 
         return paiements;
     }
+
 
     public List<String> getAllUserNames() throws SQLException {
         List<String> names = new ArrayList<>();

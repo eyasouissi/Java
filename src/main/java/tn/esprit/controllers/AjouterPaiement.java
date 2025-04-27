@@ -31,6 +31,15 @@ public class AjouterPaiement {
 
     @FXML
     private Label offreLabel;
+    @FXML
+    private void goHome() {
+        // Navigation vers accueil
+    }
+
+    @FXML
+    private void goOffres() {
+        // Navigation vers la page d'offres
+    }
 
     private final paiementService paiementService = new paiementService();
     private Offre offre;

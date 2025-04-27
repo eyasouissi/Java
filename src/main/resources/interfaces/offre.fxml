@@ -28,7 +28,7 @@
                 <Label text="🖼️ Image:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
                 <HBox spacing="5" alignment="CENTER_LEFT" GridPane.rowIndex="1" GridPane.columnIndex="1">
                     <TextField fx:id="image_offre" HBox.hgrow="ALWAYS" styleClass="custom-field"/>
-                    <Button fx:id="btnChoisirImage" text="📂" maxHeight="28" styleClass="small-icon-btn"/>
+                    <Button fx:id="btnChoisirImage" text="📂" maxHeight="28" styleClass="small-icon-btn" onAction="#choisirImage"/>
                 </HBox>
 
                 <!-- Prix -->
@@ -38,12 +38,12 @@
 
                 <!-- Dates -->
                 <Label text="📅 Date de début:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                <TextField fx:id="date_debut" GridPane.rowIndex="3" GridPane.columnIndex="1"
-                           styleClass="custom-field"/>
+                <DatePicker fx:id="date_debut" GridPane.rowIndex="3" GridPane.columnIndex="1"
+                            styleClass="custom-field"/>
 
                 <Label text="📅 Date de fin:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-                <TextField fx:id="date_fin" GridPane.rowIndex="4" GridPane.columnIndex="1"
-                           styleClass="custom-field"/>
+                <DatePicker fx:id="date_fin" GridPane.rowIndex="4" GridPane.columnIndex="1"
+                            styleClass="custom-field"/>
 
                 <!-- Description -->
                 <Label text="📝 Description:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
@@ -53,7 +53,7 @@
 
             <!-- Boutons -->
             <HBox spacing="20" alignment="CENTER">
-                <Button fx:id="btnAjouter" text="✅ Ajouter l'offre" styleClass="modern-btn"/>
+                <Button fx:id="btnAjouter" text="✅ Ajouter l'offre" onAction="#ajouterOffre" styleClass="modern-btn"/>
                 <Button text="📋 Voir les Offres" onAction="#allerVersAffichage" styleClass="modern-btn-secondary"/>
             </HBox>
         </VBox>

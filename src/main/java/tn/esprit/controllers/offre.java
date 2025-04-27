@@ -1,10 +1,14 @@
 package tn.esprit.controllers;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TextField;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import tn.esprit.entities.Offre;
@@ -13,120 +17,150 @@ import tn.esprit.services.offreService;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class offre {
+    @FXML
+    private TextField nom_offre;
 
     @FXML
-    private TextField nom_offre, image_offre, prix, date_debut, date_fin, description;
+    private TextField image_offre;
 
     @FXML
-    private Button btnAjouter, btnChoisirImage;
-
-    private final offreService offreService = new offreService();
+    private TextField prix;
 
     @FXML
-    void initialize() {
-        date_debut.setText(LocalDate.now().toString());
-        btnAjouter.setOnAction(this::ajouterOffre);
-        btnChoisirImage.setOnAction(this::choisirImageDepuisPC);
+    private DatePicker date_debut;
+
+    @FXML
+    private DatePicker date_fin;
+
+    @FXML
+    private TextField description;
+
+    @FXML
+    private Button btnAjouter;
+
+    @FXML
+    private Button btnChoisirImage;
+
+    private File selectedFile;
+
+    @FXML
+    public void initialize() {
+        // Initialiser les champs si nécessaire
+        date_debut.setValue(LocalDate.now());
     }
 
-    private void choisirImageDepuisPC(ActionEvent event) {
+    @FXML
+    public void choisirImage(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choisir une image");
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg")
+                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif")
         );
 
-        File selectedFile = fileChooser.showOpenDialog(new Stage());
-
+        selectedFile = fileChooser.showOpenDialog(btnChoisirImage.getScene().getWindow());
         if (selectedFile != null) {
-            try {
-                // Copier le fichier dans src/main/resources/images/
-                File destDir = new File("src/main/resources/images/");
-                if (!destDir.exists()) destDir.mkdirs();
-
-                File destFile = new File(destDir, selectedFile.getName());
-                Files.copy(selectedFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-
-                // Mettre à jour le champ image avec le nom du fichier
-                image_offre.setText(selectedFile.getName());
-
-            } catch (IOException e) {
-                showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors de la copie de l'image : " + e.getMessage());
-            }
+            image_offre.setText(selectedFile.getAbsolutePath());
         }
     }
 
-    private void ajouterOffre(ActionEvent event) {
+    @FXML
+    public void ajouterOffre(ActionEvent event) {
         try {
-            String nom = nom_offre.getText();
-            if (nom.matches("\\d+")) {
-                showAlert(Alert.AlertType.ERROR, "Erreur", "Le nom de l'offre ne peut pas être un nombre.");
+            // Validation des champs
+            if (nom_offre.getText().isEmpty() || prix.getText().isEmpty() ||
+                    date_debut.getValue() == null || date_fin.getValue() == null ||
+                    description.getText().isEmpty()) {
+                afficherAlerte("Erreur", "Tous les champs sont obligatoires.");
                 return;
             }
 
-            String image = image_offre.getText();
-            double prixValue = Double.parseDouble(prix.getText());
+            String nom = nom_offre.getText();
+            Double prixVal;
+            try {
+                prixVal = Double.parseDouble(prix.getText());
+                if (prixVal <= 0) {
+                    afficherAlerte("Erreur", "Le prix doit être supérieur à 0.");
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                afficherAlerte("Erreur", "Le prix doit être un nombre valide.");
+                return;
+            }
 
-            LocalDate dateDebut = LocalDate.parse(date_debut.getText());
-            LocalDate dateFin = LocalDate.parse(date_fin.getText());
+            LocalDateTime dateDebut = date_debut.getValue().atStartOfDay();
+            LocalDate dateFin = date_fin.getValue();
 
-            if (!dateFin.isAfter(dateDebut)) {
-                showAlert(Alert.AlertType.ERROR, "Erreur", "La date de fin doit être après la date de début.");
+            // Vérifier que la date de fin est après la date de début
+            if (dateFin.isBefore(date_debut.getValue())) {
+                afficherAlerte("Erreur", "La date de fin doit être après la date de début.");
                 return;
             }
 
             String desc = description.getText();
 
-            Offre offre = new Offre(nom, image, prixValue, dateDebut.atStartOfDay(), dateFin, desc);
-            offreService.ajouter(offre);
+            // Copier l'image dans un dossier du projet si une image est sélectionnée
+            String imagePath = "";
+            if (selectedFile != null) {
+                Path destination = Paths.get("src/main/resources/images/" + selectedFile.getName());
+                Files.createDirectories(destination.getParent());
+                Files.copy(selectedFile.toPath(), destination, StandardCopyOption.REPLACE_EXISTING);
+                imagePath = "/images/" + selectedFile.getName();
+            }
 
-            showAlert(Alert.AlertType.INFORMATION, "Succès", "Offre ajoutée avec succès !");
-            clearFields();
-            date_debut.setText(LocalDate.now().toString());
+            // Créer l'offre
+            Offre nouvelleOffre = new Offre(nom, imagePath, prixVal, dateDebut, dateFin, desc);
 
-        } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Le prix doit être un nombre.");
+            // Ajouter l'offre à la base de données en utilisant le service
+            offreService service = new offreService();
+            service.ajouter(nouvelleOffre);
+
+            // Réinitialiser les champs
+            reinitialiserChamps();
+
+            afficherAlerte("Succès", "L'offre a été ajoutée avec succès!");
+
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Une erreur est survenue : " + e.getMessage());
+            afficherAlerte("Erreur", "Une erreur s'est produite: " + e.getMessage());
+            e.printStackTrace();
         }
     }
-
-    private void clearFields() {
+    private void reinitialiserChamps() {
         nom_offre.clear();
         image_offre.clear();
         prix.clear();
-        date_debut.clear();
-        date_fin.clear();
+        date_debut.setValue(LocalDate.now());
+        date_fin.setValue(null);
         description.clear();
+        selectedFile = null;
     }
 
-    private void showAlert(Alert.AlertType type, String title, String content) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
+    private void afficherAlerte(String titre, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titre);
         alert.setHeaderText(null);
-        alert.setContentText(content);
+        alert.setContentText(message);
         alert.showAndWait();
     }
 
     @FXML
-    private void allerVersAffichage(ActionEvent event) {
+    public void allerVersAffichage(ActionEvent event) {
         try {
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/interfaces/AfficherOffre.fxml"));
-            javafx.scene.Parent root = loader.load();
-
-            javafx.scene.Scene scene = ((Button) event.getSource()).getScene();
-            javafx.stage.Stage stage = (javafx.stage.Stage) scene.getWindow();
-            stage.setScene(new javafx.scene.Scene(root));
-            stage.setTitle("Liste des Offres");
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/interfaces/afficherOffre.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            Stage stage = (Stage) btnAjouter.getScene().getWindow();
+            stage.setScene(scene);
             stage.show();
-
-        } catch (Exception e) {
+        } catch (IOException e) {
+            afficherAlerte("Erreur", "Impossible de charger la page d'affichage: " + e.getMessage());
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir la page d'affichage !");
         }
     }
 }

@@ -3,6 +3,8 @@ package tn.esprit.tests;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+
+
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -11,7 +13,9 @@ public class mainFx extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         // Charger AfficherOffre.fxml au démarrage
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/interfaces/AfficherOffre.fxml"));
+       FXMLLoader loader = new FXMLLoader(getClass().getResource("/interfaces/frontOffre.fxml"));
+
+     //  FXMLLoader loader = new FXMLLoader(getClass().getResource("/interfaces/AfficherOffre.fxml"));
         Parent root = loader.load();
 
         // Créer la scène

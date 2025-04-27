@@ -1,72 +1,112 @@
 package tn.esprit.controllers;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
 import javafx.util.Callback;
-import javafx.beans.property.SimpleStringProperty;
 import tn.esprit.entities.Paiement;
 import tn.esprit.services.paiementService;
+import javafx.beans.property.SimpleStringProperty;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
+import javafx.stage.Stage;
+import javafx.scene.Scene;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.layout.AnchorPane;
 
 public class AfficherPaiement {
 
-    @FXML private TableView<Paiement> tablePaiements;
-    @FXML private TableColumn<Paiement, String> colOffre;
-    @FXML private TableColumn<Paiement, String> colUtilisateur;
-    @FXML private TableColumn<Paiement, String> colDate;
-    @FXML private TableColumn<Paiement, Void> colAction;
-    @FXML private Label lblNomOffre;
-    @FXML private Label lblNomUtilisateur;
+    @FXML
+    private TableView<Paiement> tablePaiements;
+
+    @FXML
+    private TableColumn<Paiement, String> colUser;
+
+    @FXML
+    private TableColumn<Paiement, String> colOffre;
+
+    @FXML
+    private TableColumn<Paiement, String> colDate;
+
+    @FXML
+    private TableColumn<Paiement, Void> colAction;
+
+    @FXML
+    private Button btnRetourOffres;
+
+    @FXML
+    private TextField searchField;
+
+    @FXML
+    private ComboBox<String> sortComboBox;
 
     private final paiementService paiementService = new paiementService();
+    private ObservableList<Paiement> paiementsList = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
-        // ✅ Remplissage des colonnes
-        colOffre.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getOffre().getName())); // Affiche le nom de l'offre
+        // Assurez-vous que btnRetourOffres est correctement lié ici.
+        System.out.println(btnRetourOffres); // Vérifiez si btnRetourOffres est non null
 
-        colUtilisateur.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getUser().getName())); // Affiche le nom de l'utilisateur
+        // Définir les données des colonnes
+        colUser.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getUser() != null ? cellData.getValue().getUser().getName() : "N/A"));
+        colOffre.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getOffre() != null ? cellData.getValue().getOffre().getName() : "N/A"));
+        colDate.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPaymentDate() != null ? cellData.getValue().getPaymentDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) : ""));
 
-        colDate.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getPaymentDate().toLocalDate().toString())); // Affiche la date du paiement
+        chargerPaiements();
+        ajouterBoutonsActions();
 
-        // ✅ Charger les paiements
+        // Initialiser le ComboBox avec des options de tri
+        sortComboBox.getItems().addAll("Date croissante", "Date décroissante");
+
+        // Ajout de l'écouteur pour la recherche dynamique
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> appliquerFiltrageEtTri());
+
+        // Ajout de l'écouteur pour le changement de critère de tri
+        sortComboBox.valueProperty().addListener((observable, oldValue, newValue) -> appliquerFiltrageEtTri());
+    }
+
+    private void chargerPaiements() {
         try {
-            // Appel de la méthode recuperer pour obtenir la liste des paiements
             List<Paiement> paiements = paiementService.recuperer();
-
-            // Ajouter les paiements récupérés à la TableView
-            tablePaiements.getItems().setAll(paiements);
-
-            // ✅ Sélection d'une ligne
-            tablePaiements.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
-                if (newSel != null) {
-                    lblNomOffre.setText("Offre: " + newSel.getOffre().getName());  // Affiche le nom de l'offre
-                    lblNomUtilisateur.setText("Utilisateur: " + newSel.getUser().getName());  // Affiche le nom de l'utilisateur
-                } else {
-                    lblNomOffre.setText("Offre: -");
-                    lblNomUtilisateur.setText("Utilisateur: -");
-                }
-            });
-
+            paiementsList.setAll(paiements);
+            tablePaiements.setItems(paiementsList);
         } catch (SQLException e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors du chargement des paiements.");
         }
-
-        ajouterBoutonsActions();
     }
 
+    private void appliquerFiltrageEtTri() {
+        String recherche = searchField.getText().toLowerCase();
+        String critereTri = sortComboBox.getValue();
+
+        // Filtrer par nom d'utilisateur
+        List<Paiement> resultat = paiementsList.stream()
+                .filter(paiement -> paiement.getUser() != null &&
+                        paiement.getUser().getName().toLowerCase().contains(recherche))
+                .collect(Collectors.toList());
+
+        // Tri
+        if (critereTri != null) {
+            switch (critereTri) {
+                case "Date croissante":
+                    resultat.sort((p1, p2) -> p1.getPaymentDate().compareTo(p2.getPaymentDate()));
+                    break;
+                case "Date décroissante":
+                    resultat.sort((p1, p2) -> p2.getPaymentDate().compareTo(p1.getPaymentDate()));
+                    break;
+            }
+        }
+
+        tablePaiements.getItems().setAll(resultat);
+    }
 
     private void ajouterBoutonsActions() {
         colAction.setCellFactory(new Callback<>() {
@@ -76,7 +116,8 @@ public class AfficherPaiement {
                     private final Button deleteBtn = new Button("🗑 Supprimer");
 
                     {
-                        deleteBtn.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-size: 13px;");
+                        deleteBtn.getStyleClass().add("supprimer-btn");
+
                         deleteBtn.setOnAction(event -> {
                             Paiement paiement = getTableView().getItems().get(getIndex());
                             try {
@@ -96,7 +137,7 @@ public class AfficherPaiement {
                         if (empty) {
                             setGraphic(null);
                         } else {
-                            setGraphic(new HBox(deleteBtn));
+                            setGraphic(new HBox(10, deleteBtn));
                         }
                     }
                 };
@@ -105,22 +146,24 @@ public class AfficherPaiement {
     }
 
     @FXML
-    private void allerVersOffre() {
+    private void allerVersOffres() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/interfaces/AfficherOffre.fxml"));
-            Parent root = loader.load();
+            // Charger le fichier FXML de la vue "AfficherOffre"
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/interfaces/afficherOffre.fxml"));
+            AnchorPane newPage = loader.load();
 
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+            // Obtenir la scène actuelle
+            Stage currentStage = (Stage) btnRetourOffres.getScene().getWindow();
 
-            Stage stage = (Stage) tablePaiements.getScene().getWindow();
-            stage.setScene(scene);
-            stage.setTitle("Liste des Offres");
-            stage.show();
+            // Créer une nouvelle scène avec la vue "AfficherOffre"
+            Scene newScene = new Scene(newPage);
 
+            // Changer la scène pour la nouvelle vue
+            currentStage.setScene(newScene);
+            currentStage.show();
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir la page des offres !");
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors du changement de vue.");
         }
     }
 

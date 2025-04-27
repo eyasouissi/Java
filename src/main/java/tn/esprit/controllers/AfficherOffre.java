@@ -6,14 +6,15 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import tn.esprit.entities.Offre;
 import tn.esprit.services.offreService;
-import javafx.scene.layout.HBox;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Comparator;
 import java.util.List;
 
 public class AfficherOffre {
@@ -42,7 +43,14 @@ public class AfficherOffre {
     @FXML
     private TableColumn<Offre, Void> colAction;
 
+    @FXML
+    private ComboBox<String> sortComboBox;
+
+    @FXML
+    private TextField searchField;
+
     private final offreService offreService = new offreService();
+    private List<Offre> toutesLesOffres;
 
     @FXML
     public void initialize() {
@@ -54,14 +62,44 @@ public class AfficherOffre {
         colDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
 
         try {
-            List<Offre> offres = offreService.recuperer();
-            tableOffres.getItems().setAll(offres);
+            toutesLesOffres = offreService.recuperer();
+            tableOffres.getItems().setAll(toutesLesOffres);
         } catch (SQLException e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors du chargement des offres.");
         }
 
+        sortComboBox.getItems().addAll("Nom (A-Z)", "Prix croissant", "Prix décroissant");
+
+        // Recherche dynamique
+        searchField.textProperty().addListener((obs, oldVal, newVal) -> appliquerFiltrageEtTri());
+
+        // Tri dynamique
+        sortComboBox.setOnAction(event -> appliquerFiltrageEtTri());
+
         ajouterBoutonsActions();
+    }
+
+    private void appliquerFiltrageEtTri() {
+        String recherche = searchField.getText().toLowerCase();
+        String critereTri = sortComboBox.getValue();
+
+        List<Offre> resultat = toutesLesOffres.stream()
+                .filter(offre -> offre.getName().toLowerCase().contains(recherche))
+                .toList();
+
+        if (critereTri != null) {
+            switch (critereTri) {
+                case "Prix croissant" -> resultat = resultat.stream()
+                        .sorted(Comparator.comparingDouble(Offre::getPrice)).toList();
+                case "Prix décroissant" -> resultat = resultat.stream()
+                        .sorted(Comparator.comparingDouble(Offre::getPrice).reversed()).toList();
+                case "Nom (A-Z)" -> resultat = resultat.stream()
+                        .sorted(Comparator.comparing(Offre::getName, String.CASE_INSENSITIVE_ORDER)).toList();
+            }
+        }
+
+        tableOffres.getItems().setAll(resultat);
     }
 
     private void ajouterBoutonsActions() {
@@ -69,32 +107,30 @@ public class AfficherOffre {
             @Override
             public TableCell<Offre, Void> call(final TableColumn<Offre, Void> param) {
                 return new TableCell<>() {
-
                     private final Button modifierBtn = new Button("✏ Modifier");
                     private final Button deleteBtn = new Button("🗑 Supprimer");
 
                     {
-                        // Appliquer les styles CSS définis dans style.css
-                        modifierBtn.getStyleClass().add("modifier-btn");
-                        deleteBtn.getStyleClass().add("supprimer-btn");
+                        // Style pour le bouton Modifier (jaune), agrandi
+                        modifierBtn.setStyle("-fx-background-color: yellow; -fx-text-fill: black; -fx-font-size: 12px; -fx-padding: 5 10;");
+                        modifierBtn.setOnAction(event -> {
+                            Offre offre = getTableView().getItems().get(getIndex());
+                            openModifierOffreWindow(offre);
+                        });
 
-                        // Action pour supprimer une offre
+                        // Style pour le bouton Supprimer (rouge), agrandi
+                        deleteBtn.setStyle("-fx-background-color: red; -fx-text-fill: white; -fx-font-size: 12px; -fx-padding: 5 10;");
                         deleteBtn.setOnAction(event -> {
                             Offre offre = getTableView().getItems().get(getIndex());
                             try {
                                 offreService.supprimer(offre);
-                                getTableView().getItems().remove(offre);
+                                toutesLesOffres.remove(offre);
+                                appliquerFiltrageEtTri();
                                 showAlert(Alert.AlertType.INFORMATION, "Succès", "Offre supprimée !");
                             } catch (SQLException e) {
                                 e.printStackTrace();
                                 showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de supprimer l'offre.");
                             }
-                        });
-
-                        // Action pour modifier une offre
-                        modifierBtn.setOnAction(event -> {
-                            Offre offre = getTableView().getItems().get(getIndex());
-                            openModifierOffreWindow(offre);
                         });
                     }
 
@@ -123,13 +159,10 @@ public class AfficherOffre {
             modifierOffreController.setTableOffres(tableOffres);
 
             Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-
             Stage stage = new Stage();
             stage.setScene(scene);
             stage.setTitle("Modifier Offre");
             stage.show();
-
         } catch (IOException e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir la fenêtre de modification.");
@@ -139,20 +172,37 @@ public class AfficherOffre {
     @FXML
     private void allerVersAjout() {
         try {
+            // Assurez-vous que ce chemin correspond à l'emplacement réel de votre fichier FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/interfaces/offre.fxml"));
             Parent root = loader.load();
 
+            // Créez une nouvelle scène avec la racine chargée
             Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
+            // Obtenez la fenêtre actuelle et changez sa scène
             Stage stage = (Stage) tableOffres.getScene().getWindow();
             stage.setScene(scene);
             stage.setTitle("Ajouter une Offre");
             stage.show();
-
         } catch (IOException e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir la page d'ajout !");
+        }
+    }
+    @FXML
+    private void allerVersPaiement() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/interfaces/AfficherPaiement.fxml"));
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root);
+            Stage stage = (Stage) tableOffres.getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("Liste des Paiements");
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir la page des paiements !");
         }
     }
 
@@ -163,24 +213,4 @@ public class AfficherOffre {
         alert.setContentText(content);
         alert.showAndWait();
     }
-    @FXML
-    private void allerVersPaiement() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/interfaces/AfficherPaiement.fxml"));
-            Parent root = loader.load();
-
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-
-            Stage stage = (Stage) tableOffres.getScene().getWindow();
-            stage.setScene(scene);
-            stage.setTitle("Liste des Paiements");
-            stage.show();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir la page des paiements !");
-        }
-    }
-
 }
