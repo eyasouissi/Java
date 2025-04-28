@@ -1,4 +1,3 @@
-// frontOffre.java
 package tn.esprit.controllers;
 
 import javafx.fxml.FXML;
@@ -6,28 +5,34 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Pagination;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import tn.esprit.entities.Offre;
 import tn.esprit.services.offreService;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class frontOffre {
 
     @FXML
-    private HBox offersContainer;
+    private Pagination offersPagination;
 
-    private offreService offreService;
     @FXML
     private Button profileBtn;
+
+    private offreService offreService;
+    private List<Offre> allOffers;
+    private final int OFFERS_PER_PAGE = 3; // Number of offers to display per page
 
     @FXML
     private void goHome() {
@@ -46,18 +51,46 @@ public class frontOffre {
 
     public frontOffre() {
         offreService = new offreService();
+        allOffers = new ArrayList<>();
     }
 
     public void initialize() {
         try {
-            List<Offre> offres = offreService.recuperer();
-            for (Offre offre : offres) {
-                VBox offerBox = createOfferBox(offre);
-                offersContainer.getChildren().add(offerBox);
-            }
+            // Load all offers
+            allOffers = offreService.recuperer();
+
+            // Calculate total pages needed
+            int pageCount = (int) Math.ceil((double) allOffers.size() / OFFERS_PER_PAGE);
+
+            // Initialize pagination
+            offersPagination.setPageCount(pageCount);
+            offersPagination.setCurrentPageIndex(0);
+
+            // Set page factory for the pagination
+            offersPagination.setPageFactory(this::createPage);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private HBox createPage(int pageIndex) {
+        // Create an HBox to hold the offers for the current page
+        HBox pageOffersContainer = new HBox(20);
+        pageOffersContainer.setAlignment(javafx.geometry.Pos.CENTER);
+        pageOffersContainer.setStyle("-fx-padding: 10;");
+
+        // Calculate start and end index for the current page
+        int start = pageIndex * OFFERS_PER_PAGE;
+        int end = Math.min(start + OFFERS_PER_PAGE, allOffers.size());
+
+        // Add offers for the current page
+        for (int i = start; i < end; i++) {
+            VBox offerBox = createOfferBox(allOffers.get(i));
+            pageOffersContainer.getChildren().add(offerBox);
+        }
+
+        return pageOffersContainer;
     }
 
     private VBox createOfferBox(Offre offre) {
@@ -125,7 +158,7 @@ public class frontOffre {
             if (ajouterPaiementController != null) {
                 ajouterPaiementController.setOffre(offre);
             }
-            Scene currentScene = offersContainer.getScene();
+            Scene currentScene = offersPagination.getScene();
             if (currentScene != null) {
                 Stage stage = (Stage) currentScene.getWindow();
                 Scene scene = new Scene(root);

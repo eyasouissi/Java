@@ -1,24 +1,29 @@
 package tn.esprit.controllers;
 
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.beans.property.SimpleStringProperty;
 import tn.esprit.entities.Paiement;
 import tn.esprit.services.paiementService;
-import javafx.beans.property.SimpleStringProperty;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
-import javafx.stage.Stage;
-import javafx.scene.Scene;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.layout.AnchorPane;
 
 public class AfficherPaiement {
 
@@ -38,7 +43,7 @@ public class AfficherPaiement {
     private TableColumn<Paiement, Void> colAction;
 
     @FXML
-    private Button btnRetourOffres;
+    private Button btnRetourOffres, btnExporterPDF;
 
     @FXML
     private TextField searchField;
@@ -51,24 +56,19 @@ public class AfficherPaiement {
 
     @FXML
     public void initialize() {
-        // Assurez-vous que btnRetourOffres est correctement lié ici.
-        System.out.println(btnRetourOffres); // Vérifiez si btnRetourOffres est non null
-
-        // Définir les données des colonnes
-        colUser.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getUser() != null ? cellData.getValue().getUser().getName() : "N/A"));
-        colOffre.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getOffre() != null ? cellData.getValue().getOffre().getName() : "N/A"));
-        colDate.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPaymentDate() != null ? cellData.getValue().getPaymentDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) : ""));
+        colUser.setCellValueFactory(cellData -> new SimpleStringProperty(
+                cellData.getValue().getUser() != null ? cellData.getValue().getUser().getName() : "N/A"));
+        colOffre.setCellValueFactory(cellData -> new SimpleStringProperty(
+                cellData.getValue().getOffre() != null ? cellData.getValue().getOffre().getName() : "N/A"));
+        colDate.setCellValueFactory(cellData -> new SimpleStringProperty(
+                cellData.getValue().getPaymentDate() != null ? cellData.getValue().getPaymentDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) : ""
+        ));
 
         chargerPaiements();
         ajouterBoutonsActions();
 
-        // Initialiser le ComboBox avec des options de tri
         sortComboBox.getItems().addAll("Date croissante", "Date décroissante");
-
-        // Ajout de l'écouteur pour la recherche dynamique
         searchField.textProperty().addListener((observable, oldValue, newValue) -> appliquerFiltrageEtTri());
-
-        // Ajout de l'écouteur pour le changement de critère de tri
         sortComboBox.valueProperty().addListener((observable, oldValue, newValue) -> appliquerFiltrageEtTri());
     }
 
@@ -87,21 +87,15 @@ public class AfficherPaiement {
         String recherche = searchField.getText().toLowerCase();
         String critereTri = sortComboBox.getValue();
 
-        // Filtrer par nom d'utilisateur
         List<Paiement> resultat = paiementsList.stream()
                 .filter(paiement -> paiement.getUser() != null &&
                         paiement.getUser().getName().toLowerCase().contains(recherche))
                 .collect(Collectors.toList());
 
-        // Tri
         if (critereTri != null) {
             switch (critereTri) {
-                case "Date croissante":
-                    resultat.sort((p1, p2) -> p1.getPaymentDate().compareTo(p2.getPaymentDate()));
-                    break;
-                case "Date décroissante":
-                    resultat.sort((p1, p2) -> p2.getPaymentDate().compareTo(p1.getPaymentDate()));
-                    break;
+                case "Date croissante" -> resultat.sort((p1, p2) -> p1.getPaymentDate().compareTo(p2.getPaymentDate()));
+                case "Date décroissante" -> resultat.sort((p1, p2) -> p2.getPaymentDate().compareTo(p1.getPaymentDate()));
             }
         }
 
@@ -117,7 +111,6 @@ public class AfficherPaiement {
 
                     {
                         deleteBtn.getStyleClass().add("supprimer-btn");
-
                         deleteBtn.setOnAction(event -> {
                             Paiement paiement = getTableView().getItems().get(getIndex());
                             try {
@@ -148,22 +141,63 @@ public class AfficherPaiement {
     @FXML
     private void allerVersOffres() {
         try {
-            // Charger le fichier FXML de la vue "AfficherOffre"
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/interfaces/afficherOffre.fxml"));
             AnchorPane newPage = loader.load();
-
-            // Obtenir la scène actuelle
             Stage currentStage = (Stage) btnRetourOffres.getScene().getWindow();
-
-            // Créer une nouvelle scène avec la vue "AfficherOffre"
             Scene newScene = new Scene(newPage);
-
-            // Changer la scène pour la nouvelle vue
             currentStage.setScene(newScene);
             currentStage.show();
         } catch (IOException e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors du changement de vue.");
+        }
+    }
+
+    @FXML
+    private void exporterPDF() {
+        Document document = new Document();
+        try {
+            String userHome = System.getProperty("user.home");
+            String downloadsPath = userHome + "/Downloads/liste_paiements.pdf";
+
+            PdfWriter.getInstance(document, new FileOutputStream(downloadsPath));
+            document.open();
+
+            Font titleFont = new Font(Font.FontFamily.HELVETICA, 20, Font.BOLD, BaseColor.MAGENTA);
+            Paragraph title = new Paragraph("Liste des Paiements\n\n", titleFont);
+            title.setAlignment(Element.ALIGN_CENTER);
+            document.add(title);
+
+            PdfPTable table = new PdfPTable(3);
+            table.setWidthPercentage(100);
+
+            PdfPCell cell;
+
+            cell = new PdfPCell(new Phrase("Utilisateur"));
+            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            table.addCell(cell);
+
+            cell = new PdfPCell(new Phrase("Offre"));
+            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            table.addCell(cell);
+
+            cell = new PdfPCell(new Phrase("Date de Paiement"));
+            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            table.addCell(cell);
+
+            for (Paiement paiement : tablePaiements.getItems()) {
+                table.addCell(paiement.getUser() != null ? paiement.getUser().getName() : "N/A");
+                table.addCell(paiement.getOffre() != null ? paiement.getOffre().getName() : "N/A");
+                table.addCell(paiement.getPaymentDate() != null ? paiement.getPaymentDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) : "");
+            }
+
+            document.add(table);
+            document.close();
+
+            showAlert(Alert.AlertType.INFORMATION, "Succès", "Le fichier PDF a été enregistré dans Téléchargements !");
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors de la génération du PDF.");
         }
     }
 

@@ -38,6 +38,9 @@
 
             <!-- Boutons -->
             <HBox spacing="20" alignment="CENTER_RIGHT">
+                <Button fx:id="btnExporterPDF" text="📄 Exporter en PDF"
+                        style="-fx-background-color: #4A235A; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 15; -fx-border-radius: 5px;"
+                        onAction="#exporterPDF" />
                 <Button fx:id="btnRetourOffres" text="🔙 Retour aux Offres"
                         style="-fx-background-color: #4A235A; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 15; -fx-border-radius: 5px;"
                         onAction="#allerVersOffres"/>

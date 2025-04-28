@@ -315,3 +315,109 @@
     -fx-font-weight: bold;
     -fx-background-radius: 5;
 }
+/* Add these styles to your existing style.css file */
+
+.payment-form {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 10);
+}
+
+.section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #6d28d9;
+}
+
+.payment-field, .expiry-field, .cvc-field {
+    -fx-background-color: #f9fafb;
+    -fx-border-color: #d1d5db;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 8 12;
+}
+
+.payment-field:focused, .expiry-field:focused, .cvc-field:focused {
+    -fx-border-color: #8b5cf6;
+    -fx-background-color: white;
+}
+
+.payment-button {
+    -fx-background-color: #8b5cf6;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+
+.payment-button:hover {
+    -fx-background-color: #7c3aed;
+}
+
+.total-label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.status-label {
+    -fx-padding: 10;
+}
+
+.success-text {
+    -fx-text-fill: #10b981;
+    -fx-font-weight: bold;
+}
+
+.error-text {
+    -fx-text-fill: #ef4444;
+    -fx-font-weight: bold;
+}
+
+.header-bar {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 0, 4, 0, 0);
+}
+
+.header-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #6d28d9;
+}
+
+.header-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #6d28d9;
+    -fx-cursor: hand;
+}
+
+.header-button:hover {
+    -fx-text-fill: #7c3aed;
+}
+
+.footer-bar {
+    -fx-background-color: #f3f4f6;
+    -fx-padding: 10;
+}
+.offers-pagination .pagination-control {
+    -fx-background-color: transparent;
+}
+
+.offers-pagination .pagination-control .button,
+.offers-pagination .pagination-control .toggle-button {
+    -fx-background-color: #f0f0f0;
+    -fx-background-radius: 50%;
+    -fx-min-width: 30px;
+    -fx-min-height: 30px;
+    -fx-text-fill: #4b0082;
+}
+
+.offers-pagination .pagination-control .button:hover,
+.offers-pagination .pagination-control .toggle-button:hover {
+    -fx-background-color: #e0e0e0;
+}
+
+.offers-pagination .pagination-control .toggle-button:selected {
+    -fx-background-color: #6a5acd;
+    -fx-text-fill: white;
+}

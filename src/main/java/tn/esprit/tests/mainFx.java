@@ -7,15 +7,17 @@ import javafx.scene.Parent;
 
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import tn.esprit.utils.StripeConfig;
 
 public class mainFx extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        StripeConfig.initializeStripe();
         // Charger AfficherOffre.fxml au démarrage
        FXMLLoader loader = new FXMLLoader(getClass().getResource("/interfaces/frontOffre.fxml"));
 
-     //  FXMLLoader loader = new FXMLLoader(getClass().getResource("/interfaces/AfficherOffre.fxml"));
+     //FXMLLoader loader = new FXMLLoader(getClass().getResource("/interfaces/AfficherOffre.fxml"));
         Parent root = loader.load();
 
         // Créer la scène

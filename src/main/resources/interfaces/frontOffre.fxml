@@ -26,10 +26,7 @@
             <Label text="Nos Offres" styleClass="section-title" />
             <Label text="Choisissez l'abonnement qui vous convient et profitez de nos services exclusifs"
                    styleClass="section-subtitle" />
-            <HBox fx:id="offersContainer"
-                  spacing="20"
-                  alignment="CENTER"
-                  style="-fx-padding: 10;" />
+            <Pagination fx:id="offersPagination" maxPageIndicatorCount="5" styleClass="offers-pagination" />
         </VBox>
     </center>
 

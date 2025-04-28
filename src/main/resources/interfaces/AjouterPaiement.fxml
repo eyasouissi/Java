@@ -34,7 +34,8 @@
             <DatePicker fx:id="datePaiementPicker" promptText="Date du paiement"
                         prefWidth="300" styleClass="custom-field"/>
 
-            <Button text="✅ Confirmer Paiement"
+            <!-- Le bouton corrigé : ajout de fx:id -->
+            <Button fx:id="confirmerButton" text="✅ Confirmer Paiement"
                     onAction="#ajouterPaiement"
                     styleClass="modern-btn"/>
 
