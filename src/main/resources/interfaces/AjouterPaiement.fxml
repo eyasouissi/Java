@@ -35,7 +35,7 @@
                         prefWidth="300" styleClass="custom-field"/>
 
             <!-- Le bouton corrigé : ajout de fx:id -->
-            <Button fx:id="confirmerButton" text="✅ Confirmer Paiement"
+            <Button fx:id="confirmerButton" text="payer"
                     onAction="#ajouterPaiement"
                     styleClass="modern-btn"/>
 

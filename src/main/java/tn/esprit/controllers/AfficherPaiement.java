@@ -11,6 +11,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -43,7 +44,7 @@ public class AfficherPaiement {
     private TableColumn<Paiement, Void> colAction;
 
     @FXML
-    private Button btnRetourOffres, btnExporterPDF;
+    private Button btnRetourOffres, btnExporterPDF, btnVoirStatistiques;
 
     @FXML
     private TextField searchField;
@@ -150,6 +151,21 @@ public class AfficherPaiement {
         } catch (IOException e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors du changement de vue.");
+        }
+    }
+
+    @FXML
+    private void allerVersStatistiques() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/interfaces/PaiementStatistiques.fxml"));
+            BorderPane newPage = loader.load();
+            Stage currentStage = (Stage) btnVoirStatistiques.getScene().getWindow();
+            Scene newScene = new Scene(newPage);
+            currentStage.setScene(newScene);
+            currentStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors du chargement de la vue statistiques.");
         }
     }
 

@@ -12,26 +12,30 @@ import tn.esprit.utils.StripeConfig;
 public class mainFx extends Application {
 
     @Override
+
     public void start(Stage primaryStage) throws Exception {
         StripeConfig.initializeStripe();
-        // Charger AfficherOffre.fxml au démarrage
-       FXMLLoader loader = new FXMLLoader(getClass().getResource("/interfaces/frontOffre.fxml"));
+        try {
+           //FXMLLoader loader = new FXMLLoader(getClass().getResource("/interfaces/frontOffre.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/interfaces/afficherOffre.fxml"));
 
-     //FXMLLoader loader = new FXMLLoader(getClass().getResource("/interfaces/AfficherOffre.fxml"));
-        Parent root = loader.load();
+            Parent root = loader.load();
 
-        // Créer la scène
-        Scene scene = new Scene(root);
+            Scene scene = new Scene(root);
 
-        // Ajouter le fichier CSS
-        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-        System.out.println("Fichier CSS chargé depuis : " + getClass().getResource("/css/style.css"));
+            String cssPath = getClass().getResource("/css/style.css").toExternalForm();
+            System.out.println("Fichier CSS chargé depuis : " + cssPath);
+            scene.getStylesheets().add(cssPath);
 
-        // Configurer la fenêtre
-        primaryStage.setTitle("Liste des Offres 💼");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+            primaryStage.setTitle("Liste des Offres 💼");
+            primaryStage.setScene(scene);
+            primaryStage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace(); // Ceci te montrera l'erreur réelle (FXML introuvable, erreur de contrôleur, etc.)
+        }
     }
+
 
     public static void main(String[] args) {
         launch(args);

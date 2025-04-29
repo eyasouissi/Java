@@ -4,54 +4,186 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
-<?import javafx.scene.paint.Color?>
+<?import javafx.scene.image.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
+<BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="tn.esprit.controllers.AfficherOffre"
-            prefHeight="650.0" prefWidth="1000.0"
-            style="-fx-background-color: #F5F0FF; -fx-padding: 20;">
-    <children>
-        <VBox spacing="20" layoutX="20" layoutY="10" prefWidth="960">
-            <!-- Titre principal -->
-            <Label text="📋 Liste des Offres"
-                   style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #4A235A; -fx-font-family: 'Arial'; -fx-text-alignment: center;" />
+            prefHeight="700.0" prefWidth="1200.0"
+            style="-fx-background-color: #f0f2f7;">
 
-            <!-- Barre de recherche et tri -->
-            <HBox spacing="15" alignment="CENTER_LEFT">
-                <Label text="🔍 Rechercher :"
-                       style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4A235A;" />
-                <TextField fx:id="searchField" promptText="Entrez un nom d'offre"
-                           prefWidth="250" style="-fx-background-color: #FFFFFF; -fx-border-radius: 10px; -fx-border-color: #E0E0E0; -fx-padding: 5 10 5 10;" />
-                <Label text="🔽 Trier par :"
-                       style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4A235A;" />
-                <ComboBox fx:id="sortComboBox" promptText="Choisir une option"
-                          prefWidth="200" style="-fx-background-color: #FFFFFF; -fx-border-radius: 10px; -fx-border-color: #E0E0E0; -fx-padding: 5 10 5 10;"/>
+    <!-- Header Section (similar to Twig template header) -->
+    <top>
+        <HBox style="-fx-background-color: #fff; -fx-padding: 10 20; -fx-border-color: #e9edf4; -fx-border-width: 0 0 1 0; -fx-spacing: 15;" alignment="CENTER_LEFT">
+            <!-- Logo -->
+            <Label text="Mentor" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #007bff;"/>
+
+            <Region HBox.hgrow="ALWAYS" />
+
+            <!-- Menu -->
+            <HBox spacing="25" alignment="CENTER">
+                <Label text="Dashboard" style="-fx-font-size: 14px; -fx-cursor: hand;">
+                    <graphic>
+                        <ImageView fitHeight="16" fitWidth="16">
+                            <Image url="/images/tel.png"/>
+                        </ImageView>
+                    </graphic>
+                </Label>
+
+                <Label text="Courses" style="-fx-font-size: 14px; -fx-cursor: hand;">
+                    <graphic>
+                        <ImageView fitHeight="16" fitWidth="16">
+                            <Image url="/images/tel.png"/>
+                        </ImageView>
+                    </graphic>
+                </Label>
+
+                <Label text="Forum" style="-fx-font-size: 14px; -fx-cursor: hand;">
+                    <graphic>
+                        <ImageView fitHeight="16" fitWidth="16">
+                            <Image url="/images/tel.png"/>
+                        </ImageView>
+                    </graphic>
+                </Label>
+
+                <Label text="Events" style="-fx-font-size: 14px; -fx-cursor: hand;">
+                    <graphic>
+                        <ImageView fitHeight="16" fitWidth="16">
+                            <Image url="/images/tel.png"/>
+                        </ImageView>
+                    </graphic>
+                </Label>
+
+                <Label text="Groups" style="-fx-font-size: 14px; -fx-cursor: hand;">
+                    <graphic>
+                        <ImageView fitHeight="16" fitWidth="16">
+                            <Image url="/images/tel.png"/>
+                        </ImageView>
+                    </graphic>
+                </Label>
+
+                <Label text="Pricing" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #007bff; -fx-cursor: hand;">
+                    <graphic>
+                        <ImageView fitHeight="16" fitWidth="16">
+                            <Image url="/images/tel.png"/>
+                        </ImageView>
+                    </graphic>
+                </Label>
             </HBox>
 
-            <!-- Tableau des offres -->
-            <TableView fx:id="tableOffres" prefHeight="460.0" prefWidth="960.0" style="-fx-background-color: #FFFFFF; -fx-border-radius: 10px;">
-                <columns>
-                    <TableColumn fx:id="colNom" text="📛 Nom de l'offre" prefWidth="150"/>
-                    <TableColumn fx:id="colImage" text="🖼️ Image" prefWidth="150"/>
-                    <TableColumn fx:id="colPrix" text="💰 Prix" prefWidth="80"/>
-                    <TableColumn fx:id="colDateDebut" text="📅 Début" prefWidth="120"/>
-                    <TableColumn fx:id="colDateFin" text="📅 Fin" prefWidth="120"/>
-                    <TableColumn fx:id="colDescription" text="📝 Description" prefWidth="200"/>
-                    <TableColumn fx:id="colAction" text="⚙️ Action" prefWidth="180"/>
-                </columns>
-            </TableView>
+            <Region HBox.hgrow="ALWAYS" />
 
-            <!-- Boutons -->
-            <HBox spacing="20" alignment="CENTER_RIGHT">
-                <Button text="💳 Voir les Paiements"
-                        style="-fx-background-color: #4A235A; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 15; -fx-border-radius: 5px;"
-                        onAction="#allerVersPaiement"/>
-                <Button text="➕ Ajouter une offre"
-                        fx:id="btnAjouter"
-                        style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 15; -fx-border-radius: 5px;"
-                        onAction="#allerVersAjout"/>
+            <!-- Header right section -->
+            <HBox spacing="15" alignment="CENTER">
+                <Button style="-fx-background-color: transparent;">
+                    <graphic>
+                        <ImageView fitHeight="16" fitWidth="16">
+                            <Image url="/images/tel.png"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
+
+                <Button style="-fx-background-color: transparent;">
+                    <graphic>
+                        <ImageView fitHeight="16" fitWidth="16">
+                            <Image url="/images/tel.png"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
+
+                <Button style="-fx-background-color: transparent;">
+                    <graphic>
+                        <ImageView fitHeight="16" fitWidth="16">
+                            <Image url="/images/tel.png"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
+
+                <ImageView fitHeight="32" fitWidth="32" style="-fx-cursor: hand;">
+                    <Image url="/images/tel.png"/>
+                </ImageView>
             </HBox>
+        </HBox>
+    </top>
+
+    <!-- Main Content -->
+    <center>
+        <VBox style="-fx-padding: 20 30;">
+            <!-- Breadcrumb or Title -->
+            <Label text="Liste des Offres" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #1c273c; -fx-padding: 0 0 20 0;"/>
+
+            <!-- Navigation Tabs -->
+            <HBox style="-fx-background-color: #fff; -fx-padding: 0 20; -fx-border-color: #e9edf4; -fx-border-width: 1; -fx-border-radius: 5;">
+                <TabPane tabClosingPolicy="UNAVAILABLE" style="-fx-tab-min-width: 120px;">
+                    <tabs>
+                        <Tab text="Add Offre">
+                            <content>
+                                <!-- Empty content - just for placeholder -->
+                                <Region/>
+                            </content>
+                        </Tab>
+                        <Tab text="List" style="-fx-background-color: #007bff;">
+                            <content>
+                                <!-- Empty content - just for placeholder -->
+                                <Region/>
+                            </content>
+                        </Tab>
+                        <Tab text="Charts">
+                            <content>
+                                <!-- Empty content - just for placeholder -->
+                                <Region/>
+                            </content>
+                        </Tab>
+                    </tabs>
+                </TabPane>
+            </HBox>
+
+            <!-- Main Content Card -->
+            <VBox style="-fx-background-color: #fff; -fx-padding: 20; -fx-border-color: #e9edf4; -fx-border-width: 1; -fx-border-radius: 5; -fx-spacing: 20; -fx-margin: 20 0 0 0;">
+                <!-- Search & Sort Bar -->
+                <HBox spacing="15" alignment="CENTER_LEFT">
+                    <Label text="Rechercher :" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                    <TextField fx:id="searchField" promptText="Entrez un nom d'offre" prefWidth="250"
+                               style="-fx-background-color: #f9f9f9; -fx-border-color: #e0e5ec; -fx-border-radius: 4px; -fx-padding: 7;"/>
+
+                    <Region HBox.hgrow="ALWAYS"/>
+
+                    <Label text="Trier par :" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                    <ComboBox fx:id="sortComboBox" promptText="Choisir une option" prefWidth="200"
+                              style="-fx-background-color: #f9f9f9; -fx-border-color: #e0e5ec; -fx-border-radius: 4px;"/>
+                </HBox>
+
+                <!-- Table -->
+                <TableView fx:id="tableOffres" prefHeight="400.0" VBox.vgrow="ALWAYS"
+                           style="-fx-background-color: #fff; -fx-border-color: #e9edf4; -fx-border-radius: 4px;">
+                    <columns>
+                        <TableColumn fx:id="colNom" text="Nom de l'offre" prefWidth="150"/>
+                        <TableColumn fx:id="colImage" text="Image" prefWidth="150"/>
+                        <TableColumn fx:id="colPrix" text="Prix" prefWidth="100"/>
+                        <TableColumn fx:id="colDateDebut" text="Date début" prefWidth="120"/>
+                        <TableColumn fx:id="colDateFin" text="Date fin" prefWidth="120"/>
+                        <TableColumn fx:id="colDescription" text="Description" prefWidth="250"/>
+                        <TableColumn fx:id="colAction" text="Action" prefWidth="180"/>
+                    </columns>
+                </TableView>
+
+                <!-- Action Buttons -->
+                <HBox spacing="15" alignment="CENTER_RIGHT">
+                    <Button text="Voir les Paiements" fx:id="btnPaiements"
+                            style="-fx-background-color: #6f42c1; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 20; -fx-border-radius: 4px;"
+                            onAction="#allerVersPaiement"/>
+                    <Button text="Ajouter une offre" fx:id="btnAjouter"
+                            style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 20; -fx-border-radius: 4px;"
+                            onAction="#allerVersAjout"/>
+                </HBox>
+            </VBox>
         </VBox>
-    </children>
-</AnchorPane>
+    </center>
+
+    <!-- Footer if needed -->
+    <bottom>
+        <HBox style="-fx-background-color: #fff; -fx-padding: 15; -fx-border-color: #e9edf4; -fx-border-width: 1 0 0 0;" alignment="CENTER">
+            <Label text="© 2025 Mentor. All Rights Reserved." style="-fx-text-fill: #7987a1; -fx-font-size: 12px;"/>
+        </HBox>
+    </bottom>
+</BorderPane>
