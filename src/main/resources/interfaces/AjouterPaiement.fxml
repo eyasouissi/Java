@@ -14,28 +14,26 @@
     <top>
         <HBox spacing="20" alignment="CENTER_LEFT" styleClass="header-bar" style="-fx-padding: 10;">
             <Label text="🏠 Mentor" styleClass="header-title" />
-            <Button text="Accueil" onAction="#goHome" styleClass="header-button"/>
-            <Button text="Offres" onAction="#goOffres" styleClass="header-button"/>
+            <Button text="Home" onAction="#goHome" styleClass="header-button"/>
+            <Button text="Offers" onAction="#goOffres" styleClass="header-button"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Button fx:id="profileBtn" text="Profil" styleClass="btn-getstarted"/>
+            <Button fx:id="profileBtn" text="Profile" styleClass="btn-getstarted"/>
         </HBox>
     </top>
 
-    <!-- Contenu principal -->
+    <!-- Main Content -->
     <center>
         <VBox alignment="CENTER" spacing="20" style="-fx-padding: 30;">
-            <Label text="💳 Paiement de l'Offre" styleClass="section-title"/>
+            <Label text="💳 Offer Payment" styleClass="section-title"/>
             <Label fx:id="offreLabel" styleClass="paiement-label"/>
             <Label fx:id="prixLabel" styleClass="paiement-subtitle"/>
+            <Label fx:id="userLabel" styleClass="paiement-label" text="Utilisateur: "/>
 
-            <ComboBox fx:id="userComboBox" promptText="Sélectionner un utilisateur"
-                      prefWidth="300" styleClass="custom-field"/>
 
-            <DatePicker fx:id="datePaiementPicker" promptText="Date du paiement"
+            <DatePicker fx:id="datePaiementPicker" promptText="Payment date"
                         prefWidth="300" styleClass="custom-field"/>
 
-            <!-- Le bouton corrigé : ajout de fx:id -->
-            <Button fx:id="confirmerButton" text="payer"
+            <Button fx:id="confirmerButton" text="Pay"
                     onAction="#ajouterPaiement"
                     styleClass="modern-btn"/>
 
@@ -43,10 +41,6 @@
         </VBox>
     </center>
 
-    <!-- Footer -->
-    <bottom>
-        <VBox alignment="CENTER" styleClass="footer-bar" style="-fx-padding: 10;">
-            <Label text="© Mentor - Tous droits réservés." />
-        </VBox>
-    </bottom>
+
+
 </BorderPane>

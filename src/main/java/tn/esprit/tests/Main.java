@@ -1,50 +1,27 @@
 package tn.esprit.tests;
 
-import tn.esprit.entities.Offre;
-import tn.esprit.entities.Paiement;
-import tn.esprit.entities.User;
-import tn.esprit.services.offreService;
-import tn.esprit.services.paiementService;
 import tn.esprit.tools.MyDataBase;
 import java.sql.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class Main {
-    public static void main(String[] args) throws SQLException {
-        offreService pst = new offreService();
-        paiementService ps = new paiementService();
-
-        // Créer une nouvelle offre (initiale sans ID)
-        Offre offre = new Offre("Abonnement Premium", "images/premium.jpg", 29.99, LocalDateTime.now(), LocalDate.now().plusMonths(1), "Accès complet à tous les cours premium.");
-        Offre offre1 = new Offre("Premium", "images/premium.jpg", 29.99, LocalDateTime.now(), LocalDate.now().plusMonths(1), "Accès complet à tous les cours premium.");
-        // Ajouter l'offre dans la base de données
-       // pst.ajouter(offre);
-        //System.out.println("Offre ID après insertion : " + offre.getId()); // Vérifie que l'ID a bien été généré
-
-        // Créer un utilisateur pour le paiement
-        User user = new User();
-        user.setId(2L);  // L'ID de l'utilisateur doit être valide
-
-        // Créer un paiement pour l'offre insérée
-      //  Paiement paiement = new Paiement(user, offre);
-        Paiement paiement1 = new Paiement(user, offre1);
-      
-        paiement1.setId(1L);
+    public static void main(String[] args) {
+        // Test database connection
         try {
+            // This will trigger the connection
+            MyDataBase db = MyDataBase.getInstance();
+            Connection cnx = db.getCnx();
 
-         //  pst.ajouter(offre1);
-          //  pst.modifier(1, newOffre);
-            //pst.supprimer(offre2);
-          //  ps.ajouter(paiement);
-         //   ps.modifier(1,paiement1);
-            System.out.println(pst.recuperer());
-            System.out.println(ps.recuperer());
-            ps.supprimer(paiement1);
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            if (cnx != null && !cnx.isClosed()) {
+                System.out.println("✅ Database connection SUCCESS!");
+
+                // Optional: Test a simple query
+                System.out.println("\nTesting a simple query...");
+                testSimpleQuery(cnx);
+            }
+        } catch (Exception e) {
+            System.err.println("❌ Connection FAILED!");
+            e.printStackTrace();
         }
-
     }
 
     private static void testSimpleQuery(Connection cnx) {

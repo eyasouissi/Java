@@ -26,7 +26,7 @@
                 <Label text="Dashboard" style="-fx-font-size: 14px; -fx-cursor: hand;">
                     <graphic>
                         <ImageView fitHeight="16" fitWidth="16">
-                            <Image url="/images/tel.png"/>
+                            <!--  <Image url="/images/tel.png"/> -->
                         </ImageView>
                     </graphic>
                 </Label>
@@ -34,7 +34,7 @@
                 <Label text="Courses" style="-fx-font-size: 14px; -fx-cursor: hand;">
                     <graphic>
                         <ImageView fitHeight="16" fitWidth="16">
-                            <Image url="/images/tel.png"/>
+                            <!-- <Image url="/images/tel.png"/> -->
                         </ImageView>
                     </graphic>
                 </Label>
@@ -42,7 +42,7 @@
                 <Label text="Forum" style="-fx-font-size: 14px; -fx-cursor: hand;">
                     <graphic>
                         <ImageView fitHeight="16" fitWidth="16">
-                            <Image url="/images/tel.png"/>
+                            <!--   <Image url="/images/tel.png"/> -->
                         </ImageView>
                     </graphic>
                 </Label>
@@ -50,7 +50,7 @@
                 <Label text="Events" style="-fx-font-size: 14px; -fx-cursor: hand;">
                     <graphic>
                         <ImageView fitHeight="16" fitWidth="16">
-                            <Image url="/images/tel.png"/>
+                            <!--  <Image url="/images/tel.png"/> -->
                         </ImageView>
                     </graphic>
                 </Label>
@@ -58,7 +58,7 @@
                 <Label text="Groups" style="-fx-font-size: 14px; -fx-cursor: hand;">
                     <graphic>
                         <ImageView fitHeight="16" fitWidth="16">
-                            <Image url="/images/tel.png"/>
+                            <!--  <Image url="/images/tel.png"/> -->
                         </ImageView>
                     </graphic>
                 </Label>
@@ -66,7 +66,7 @@
                 <Label text="Pricing" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #007bff; -fx-cursor: hand;">
                     <graphic>
                         <ImageView fitHeight="16" fitWidth="16">
-                            <Image url="/images/tel.png"/>
+                            <!--  <Image url="/images/tel.png"/> -->
                         </ImageView>
                     </graphic>
                 </Label>
@@ -79,7 +79,7 @@
                 <Button style="-fx-background-color: transparent;">
                     <graphic>
                         <ImageView fitHeight="16" fitWidth="16">
-                            <Image url="/images/tel.png"/>
+                            <!--  <Image url="/images/tel.png"/> -->
                         </ImageView>
                     </graphic>
                 </Button>
@@ -87,7 +87,7 @@
                 <Button style="-fx-background-color: transparent;">
                     <graphic>
                         <ImageView fitHeight="16" fitWidth="16">
-                            <Image url="/images/tel.png"/>
+                            <!--  <Image url="/images/tel.png"/> -->
                         </ImageView>
                     </graphic>
                 </Button>
@@ -95,13 +95,13 @@
                 <Button style="-fx-background-color: transparent;">
                     <graphic>
                         <ImageView fitHeight="16" fitWidth="16">
-                            <Image url="/images/tel.png"/>
+                            <!--  <Image url="/images/tel.png"/> -->
                         </ImageView>
                     </graphic>
                 </Button>
 
                 <ImageView fitHeight="32" fitWidth="32" style="-fx-cursor: hand;">
-                    <Image url="/images/tel.png"/>
+                    <!-- <Image url="/images/tel.png"/> -->
                 </ImageView>
             </HBox>
         </HBox>
@@ -184,7 +184,7 @@
                         onAction="#exporterStatistiques">
                     <graphic>
                         <ImageView fitHeight="16" fitWidth="16">
-                            <Image url="/images/tel.png"/>
+                            <!--    <Image url="/images/tel.png"/> -->
                         </ImageView>
                     </graphic>
                 </Button>
@@ -193,7 +193,7 @@
                         onAction="#allerVersPaiements">
                     <graphic>
                         <ImageView fitHeight="16" fitWidth="16">
-                            <Image url="/images/tel.png"/>
+                            <!--  <Image url="/images/tel.png"/> -->
                         </ImageView>
                     </graphic>
                 </Button>

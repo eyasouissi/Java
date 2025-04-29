@@ -25,7 +25,7 @@
                 <Label text="Dashboard" style="-fx-font-size: 14px; -fx-cursor: hand;">
                     <graphic>
                         <ImageView fitHeight="16" fitWidth="16">
-                            <Image url="/images/tel.png"/>
+                            <!-- <Image url="/images/tel.png"/> -->
                         </ImageView>
                     </graphic>
                 </Label>
@@ -33,7 +33,7 @@
                 <Label text="Courses" style="-fx-font-size: 14px; -fx-cursor: hand;">
                     <graphic>
                         <ImageView fitHeight="16" fitWidth="16">
-                            <Image url="/images/tel.png"/>
+                            <!--  <Image url="/images/tel.png"/> -->
                         </ImageView>
                     </graphic>
                 </Label>
@@ -41,7 +41,7 @@
                 <Label text="Forum" style="-fx-font-size: 14px; -fx-cursor: hand;">
                     <graphic>
                         <ImageView fitHeight="16" fitWidth="16">
-                            <Image url="/images/tel.png"/>
+                            <!--  <Image url="/images/tel.png"/> -->
                         </ImageView>
                     </graphic>
                 </Label>
@@ -49,7 +49,7 @@
                 <Label text="Events" style="-fx-font-size: 14px; -fx-cursor: hand;">
                     <graphic>
                         <ImageView fitHeight="16" fitWidth="16">
-                            <Image url="/images/tel.png"/>
+                            <!-- <Image url="/images/tel.png"/> -->
                         </ImageView>
                     </graphic>
                 </Label>
@@ -57,7 +57,7 @@
                 <Label text="Groups" style="-fx-font-size: 14px; -fx-cursor: hand;">
                     <graphic>
                         <ImageView fitHeight="16" fitWidth="16">
-                            <Image url="/images/tel.png"/>
+                            <!--  <Image url="/images/tel.png"/> -->
                         </ImageView>
                     </graphic>
                 </Label>
@@ -65,7 +65,7 @@
                 <Label text="Pricing" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #007bff; -fx-cursor: hand;">
                     <graphic>
                         <ImageView fitHeight="16" fitWidth="16">
-                            <Image url="/images/tel.png"/>
+                            <!-- <Image url="/images/tel.png"/> -->
                         </ImageView>
                     </graphic>
                 </Label>
@@ -78,7 +78,7 @@
                 <Button style="-fx-background-color: transparent;">
                     <graphic>
                         <ImageView fitHeight="16" fitWidth="16">
-                            <Image url="/images/tel.png"/>
+                            <!--  <Image url="/images/tel.png"/> -->
                         </ImageView>
                     </graphic>
                 </Button>
@@ -86,7 +86,7 @@
                 <Button style="-fx-background-color: transparent;">
                     <graphic>
                         <ImageView fitHeight="16" fitWidth="16">
-                            <Image url="/images/tel.png"/>
+                            <!-- <Image url="/images/tel.png"/> -->
                         </ImageView>
                     </graphic>
                 </Button>
@@ -94,13 +94,13 @@
                 <Button style="-fx-background-color: transparent;">
                     <graphic>
                         <ImageView fitHeight="16" fitWidth="16">
-                            <Image url="/images/tel.png"/>
+                            <!--  <Image url="/images/tel.png"/> -->
                         </ImageView>
                     </graphic>
                 </Button>
 
                 <ImageView fitHeight="32" fitWidth="32" style="-fx-cursor: hand;">
-                    <Image url="/images/tel.png"/>
+                    <!--<Image url="/images/tel.png"/> -->
                 </ImageView>
             </HBox>
         </HBox>
@@ -110,33 +110,9 @@
     <center>
         <VBox style="-fx-padding: 20 30;">
             <!-- Breadcrumb or Title -->
-            <Label text="Ajouter une Offre" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #1c273c; -fx-padding: 0 0 20 0;"/>
+            <Label text="Add an Offer" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #1c273c; -fx-padding: 0 0 20 0;"/>
 
-            <!-- Navigation Tabs -->
-            <HBox style="-fx-background-color: #fff; -fx-padding: 0 20; -fx-border-color: #e9edf4; -fx-border-width: 1; -fx-border-radius: 5;">
-                <TabPane tabClosingPolicy="UNAVAILABLE" style="-fx-tab-min-width: 120px;">
-                    <tabs>
-                        <Tab text="Add Offre" style="-fx-background-color: #007bff;">
-                            <content>
-                                <!-- Empty content - just for placeholder -->
-                                <Region/>
-                            </content>
-                        </Tab>
-                        <Tab text="List">
-                            <content>
-                                <!-- Empty content - just for placeholder -->
-                                <Region/>
-                            </content>
-                        </Tab>
-                        <Tab text="Charts">
-                            <content>
-                                <!-- Empty content - just for placeholder -->
-                                <Region/>
-                            </content>
-                        </Tab>
-                    </tabs>
-                </TabPane>
-            </HBox>
+
 
             <!-- Main Content Card -->
             <VBox style="-fx-background-color: #fff; -fx-padding: 20; -fx-border-color: #e9edf4; -fx-border-width: 1; -fx-border-radius: 5; -fx-spacing: 20; -fx-margin: 20 0 0 0;">
@@ -147,8 +123,8 @@
                         <ColumnConstraints halignment="LEFT" minWidth="350" prefWidth="400" hgrow="ALWAYS"/>
                     </columnConstraints>
 
-                    <!-- Nom -->
-                    <Label text="Nom de l'offre:"
+                    <!-- Offer Name -->
+                    <Label text="Offer Name:"
                            style="-fx-font-size: 14px; -fx-font-weight: bold;"
                            GridPane.rowIndex="0" GridPane.columnIndex="0"/>
                     <TextField fx:id="nom_offre"
@@ -162,20 +138,20 @@
                     <HBox spacing="10" alignment="CENTER_LEFT" GridPane.rowIndex="1" GridPane.columnIndex="1">
                         <TextField fx:id="image_offre" HBox.hgrow="ALWAYS"
                                    style="-fx-background-color: #f9f9f9; -fx-border-color: #e0e5ec; -fx-border-radius: 4px; -fx-padding: 8;"/>
-                        <Button fx:id="btnChoisirImage" text="Parcourir" onAction="#choisirImage"
+                        <Button fx:id="btnChoisirImage" text="Browse" onAction="#choisirImage"
                                 style="-fx-background-color: #f0f0f0; -fx-text-fill: #333; -fx-font-size: 12px; -fx-padding: 8 15; -fx-border-radius: 4px;"/>
                     </HBox>
 
-                    <!-- Prix -->
-                    <Label text="Prix:"
+                    <!-- Price -->
+                    <Label text="Price:"
                            style="-fx-font-size: 14px; -fx-font-weight: bold;"
                            GridPane.rowIndex="2" GridPane.columnIndex="0"/>
                     <TextField fx:id="prix"
                                style="-fx-background-color: #f9f9f9; -fx-border-color: #e0e5ec; -fx-border-radius: 4px; -fx-padding: 8;"
                                GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-                    <!-- Date début -->
-                    <Label text="Date début:"
+                    <!-- Start Date -->
+                    <Label text="Start Date:"
                            style="-fx-font-size: 14px; -fx-font-weight: bold;"
                            GridPane.rowIndex="3" GridPane.columnIndex="0"/>
                     <DatePicker fx:id="date_debut"
@@ -183,8 +159,8 @@
                                 GridPane.rowIndex="3" GridPane.columnIndex="1"
                                 prefWidth="400"/>
 
-                    <!-- Date fin -->
-                    <Label text="Date fin:"
+                    <!-- End Date -->
+                    <Label text="End Date:"
                            style="-fx-font-size: 14px; -fx-font-weight: bold;"
                            GridPane.rowIndex="4" GridPane.columnIndex="0"/>
                     <DatePicker fx:id="date_fin"
@@ -203,19 +179,15 @@
 
                 <!-- Action Buttons -->
                 <HBox spacing="15" alignment="CENTER_RIGHT" style="-fx-padding: 20 0 0 0;">
-                    <Button text="Voir les Offres" onAction="#allerVersAffichage"
+                    <Button text="View Offers" onAction="#allerVersAffichage"
                             style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 20; -fx-border-radius: 4px;"/>
-                    <Button fx:id="btnAjouter" text="Ajouter l'offre" onAction="#ajouterOffre"
+                    <Button fx:id="btnAjouter" text="Add Offer" onAction="#ajouterOffre"
                             style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 20; -fx-border-radius: 4px;"/>
                 </HBox>
             </VBox>
+
+
         </VBox>
     </center>
 
-    <!-- Footer -->
-    <bottom>
-        <HBox style="-fx-background-color: #fff; -fx-padding: 15; -fx-border-color: #e9edf4; -fx-border-width: 1 0 0 0;" alignment="CENTER">
-            <Label text="© 2025 Mentor. All Rights Reserved." style="-fx-text-fill: #7987a1; -fx-font-size: 12px;"/>
-        </HBox>
-    </bottom>
 </BorderPane>

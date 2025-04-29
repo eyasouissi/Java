@@ -12,15 +12,18 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import tn.esprit.entities.Offre;
+import tn.esprit.entities.User;
 import tn.esprit.services.offreService;
+import tn.esprit.utils.UserSession;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import net.glxn.qrgen.javase.QRCode;
 
 public class frontOffre {
 
@@ -32,59 +35,57 @@ public class frontOffre {
 
     private offreService offreService;
     private List<Offre> allOffers;
-    private final int OFFERS_PER_PAGE = 3; // Number of offers to display per page
-
-    @FXML
-    private void goHome() {
-        // Code pour naviguer vers la page d'accueil
-    }
-
-    @FXML
-    private void goAbout() {
-        // Code pour naviguer vers la page 'About'
-    }
-
-    @FXML
-    private void goForum() {
-        // Code pour aller au forum
-    }
+    private final int OFFERS_PER_PAGE = 3;
+    private User currentUser;
 
     public frontOffre() {
         offreService = new offreService();
         allOffers = new ArrayList<>();
     }
 
+    public void setCurrentUser(User user) {
+        this.currentUser = user;
+        System.out.println("Current user set in OffresController: " + (user != null ? user.getName() : "null"));
+    }
+
+    @FXML
+    private void goHome() {
+        // Navigation home
+    }
+
+    @FXML
+    private void goAbout() {
+        // Navigation about
+    }
+
+    @FXML
+    private void goForum() {
+        // Navigation forum
+    }
+
     public void initialize() {
         try {
-            // Load all offers
             allOffers = offreService.recuperer();
-
-            // Calculate total pages needed
             int pageCount = (int) Math.ceil((double) allOffers.size() / OFFERS_PER_PAGE);
-
-            // Initialize pagination
             offersPagination.setPageCount(pageCount);
             offersPagination.setCurrentPageIndex(0);
-
-            // Set page factory for the pagination
             offersPagination.setPageFactory(this::createPage);
-
+            if (currentUser == null) {
+                currentUser = UserSession.getInstance().getCurrentUser();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     private HBox createPage(int pageIndex) {
-        // Create an HBox to hold the offers for the current page
         HBox pageOffersContainer = new HBox(20);
         pageOffersContainer.setAlignment(javafx.geometry.Pos.CENTER);
         pageOffersContainer.setStyle("-fx-padding: 10;");
 
-        // Calculate start and end index for the current page
         int start = pageIndex * OFFERS_PER_PAGE;
         int end = Math.min(start + OFFERS_PER_PAGE, allOffers.size());
 
-        // Add offers for the current page
         for (int i = start; i < end; i++) {
             VBox offerBox = createOfferBox(allOffers.get(i));
             pageOffersContainer.getChildren().add(offerBox);
@@ -105,7 +106,6 @@ public class frontOffre {
             -fx-alignment: center;
         """);
 
-        // Image
         ImageView imageView = new ImageView();
         if (offre.getImagePath() != null && !offre.getImagePath().isEmpty()) {
             File imageFile = new File("src/main/resources/images/" + offre.getImagePath());
@@ -145,6 +145,14 @@ public class frontOffre {
         """);
         btnAbonner.setOnAction(e -> onSubscribeButtonClick(offre));
 
+        // 🔥 QR Code
+        long joursRestants = calculateRemainingDays(offre);
+        String qrText = "Jours restants avant fin de l'offre \"" + offre.getName() + "\" : " + joursRestants;
+        ImageView qrCodeImageView = generateQRCodeImageView(qrText, 100, 100);
+        if (qrCodeImageView != null) {
+            offerBox.getChildren().add(qrCodeImageView);
+        }
+
         offerBox.getChildren().addAll(nomOffre, prixOffre, description, dateDebut, dateFin, btnAbonner);
         return offerBox;
     }
@@ -157,16 +165,61 @@ public class frontOffre {
             AjouterPaiement ajouterPaiementController = loader.getController();
             if (ajouterPaiementController != null) {
                 ajouterPaiementController.setOffre(offre);
+                User user = (currentUser != null) ? currentUser : UserSession.getInstance().getCurrentUser();
+                if (user != null) {
+                    ajouterPaiementController.setCurrentUser(user);
+                }
             }
             Scene currentScene = offersPagination.getScene();
             if (currentScene != null) {
                 Stage stage = (Stage) currentScene.getWindow();
-                Scene scene = new Scene(root);
-                stage.setScene(scene);
+                stage.setScene(new Scene(root));
                 stage.show();
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private long calculateRemainingDays(Offre offre) {
+        try {
+            LocalDate today = LocalDate.now();
+            Object endDateObj = offre.getEndDate();
+            LocalDate endDate;
+
+            if (endDateObj instanceof LocalDate) {
+                endDate = (LocalDate) endDateObj;
+            } else if (endDateObj instanceof java.sql.Date) {
+                endDate = ((java.sql.Date) endDateObj).toLocalDate();
+            } else if (endDateObj instanceof java.util.Date) {
+                endDate = new java.sql.Date(((java.util.Date) endDateObj).getTime()).toLocalDate();
+            } else {
+                endDate = LocalDate.parse(endDateObj.toString());
+            }
+
+            long days = ChronoUnit.DAYS.between(today, endDate);
+            return Math.max(0, days);
+        } catch (Exception e) {
+            System.err.println("Error calculating remaining days: " + e.getMessage());
+            return 0;
+        }
+    }
+
+    // ✅ Méthode QR Code
+    private ImageView generateQRCodeImageView(String text, int width, int height) {
+        try {
+            ByteArrayOutputStream qrOutput = QRCode.from(text)
+                    .withSize(width, height)
+                    .stream();
+            ByteArrayInputStream bis = new ByteArrayInputStream(qrOutput.toByteArray());
+            Image qrImage = new Image(bis);
+            ImageView qrImageView = new ImageView(qrImage);
+            qrImageView.setFitWidth(width);
+            qrImageView.setFitHeight(height);
+            return qrImageView;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class offreService implements IServices <Offre> {
+public class offreService implements Iservice <Offre> {
     Connection cnx;
 
     public offreService() {

@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class paiementService implements IServices<Paiement> {
+public class paiementService implements Iservice <Paiement> {
     Connection cnx;
 
     public paiementService() {

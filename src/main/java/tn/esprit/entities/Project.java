@@ -1,55 +1,23 @@
 package tn.esprit.entities;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.util.Objects;
 
-@Entity
-@Table(name = "project")
 public class Project {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(length = 255, nullable = false)
-    @NotBlank(message = "Title cannot be empty!")
     private String title;
-
-    @Column(columnDefinition = "TEXT", nullable = false)
-    @NotBlank(message = "Description cannot be empty!")
-    @Size(min = 5, message = "Description must contain at least 5 characters!")
     private String description;
-
-    @Column(name = "fichier_pdf", nullable = true)
     private String pdfFile;
-
-    @Column(name = "date_creation_project", nullable = false)
     private LocalDateTime creationDate;
-
-    @Column(nullable = false)
-    @NotBlank(message = "Select one of these choices!")
     private String difficulty;
-
-    @Column(name = "date_limite", nullable = true)
-    @FutureOrPresent(message = "Please enter a valid date!")
     private LocalDate deadline;
-
-    @Column(nullable = true)
     private String image;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id", nullable = true)
     private GroupStudent group;
 
-    @Transient
-    private MultipartFile pdfUpload;
-
-    @Transient
-    private MultipartFile imageUpload;
+    // File upload fields would be handled separately in your application
+    // private transient Object pdfUpload;
+    // private transient Object imageUpload;
 
     // Constructors
     public Project() {
@@ -134,22 +102,6 @@ public class Project {
 
     public void setGroup(GroupStudent group) {
         this.group = group;
-    }
-
-    public MultipartFile getPdfUpload() {
-        return pdfUpload;
-    }
-
-    public void setPdfUpload(MultipartFile pdfUpload) {
-        this.pdfUpload = pdfUpload;
-    }
-
-    public MultipartFile getImageUpload() {
-        return imageUpload;
-    }
-
-    public void setImageUpload(MultipartFile imageUpload) {
-        this.imageUpload = imageUpload;
     }
 
     // Business methods

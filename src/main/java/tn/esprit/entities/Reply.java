@@ -1,32 +1,13 @@
 package tn.esprit.entities;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Entity
-@Table(name = "reply")
 public class Reply {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(columnDefinition = "TEXT", nullable = false)
-    @NotBlank(message = "Reply content cannot be blank")
-    @Size(max = 2000, message = "Reply content cannot exceed 2000 characters")
     private String content;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
     private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
     private Comment comment;
-
-    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     // Constructors

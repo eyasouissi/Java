@@ -1,29 +1,14 @@
 package tn.esprit.entities;
 
-import jakarta.persistence.*;
 import java.util.Objects;
 
-@Entity
-@Table(name = "file")
 public class File {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "file_name", length = 255, nullable = false)
     private String fileName;
-
-    @Column(name = "is_viewed", nullable = false)
-    private Boolean isViewed = false;
-
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "level_id")
+    private boolean isViewed = false; // Using primitive boolean
     private Level level;
 
-    // Constructors
-    public File() {
-    }
+    public File() {}
 
     public File(String fileName) {
         this.fileName = fileName;
@@ -35,55 +20,32 @@ public class File {
     }
 
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getFileName() { return fileName; }
+    public void setFileName(String fileName) { this.fileName = fileName; }
 
-    public String getFileName() {
-        return fileName;
-    }
+    // Changed return type to primitive boolean
+    public boolean isViewed() { return isViewed; }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
+    public void setViewed(boolean viewed) { this.isViewed = viewed; } // Changed to accept primitive boolean
 
-    public Boolean isViewed() {
-        return isViewed;
-    }
+    public Level getLevel() { return level; }
+    public void setLevel(Level level) { this.level = level; }
 
-    public void setViewed(Boolean viewed) {
-        isViewed = viewed;
-    }
-
-    public Level getLevel() {
-        return level;
-    }
-
-    public void setLevel(Level level) {
-        this.level = level;
-    }
-
-    // Business method
     public String getFilePath() {
         return "/uploads/images/" + this.fileName;
     }
 
-    // toString() method
     @Override
     public String toString() {
         return "File{" +
                 "id=" + id +
                 ", fileName='" + fileName + '\'' +
-                ", isViewed=" + isViewed +
-                ", levelId=" + (level != null ? level.getId() : null) +
                 '}';
     }
 
-    // equals() method
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -93,13 +55,11 @@ public class File {
                 Objects.equals(fileName, file.fileName);
     }
 
-    // hashCode() method
     @Override
     public int hashCode() {
         return Objects.hash(id, fileName);
     }
 
-    // Builder pattern
     public static Builder builder() {
         return new Builder();
     }
@@ -107,7 +67,7 @@ public class File {
     public static class Builder {
         private String fileName;
         private Level level;
-        private Boolean isViewed = false;
+        private boolean isViewed = false; // Using primitive boolean
 
         public Builder fileName(String fileName) {
             this.fileName = fileName;
@@ -119,7 +79,7 @@ public class File {
             return this;
         }
 
-        public Builder isViewed(Boolean isViewed) {
+        public Builder isViewed(boolean isViewed) {
             this.isViewed = isViewed;
             return this;
         }

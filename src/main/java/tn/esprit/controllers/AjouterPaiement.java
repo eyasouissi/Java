@@ -2,8 +2,6 @@ package tn.esprit.controllers;
 
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,24 +9,23 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 import tn.esprit.entities.Offre;
 import tn.esprit.entities.Paiement;
 import tn.esprit.entities.User;
 import tn.esprit.services.paiementService;
+import tn.esprit.utils.UserSession;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class AjouterPaiement {
 
     @FXML
-    private ComboBox<User> userComboBox;
+    private Label userLabel; // Label to display user name
     @FXML
     private DatePicker datePaiementPicker;
     @FXML
@@ -38,10 +35,26 @@ public class AjouterPaiement {
     @FXML
     private Label offreLabel;
     @FXML
-    private Button confirmerButton; // Bien annoté
+    private Button confirmerButton;
+    @FXML
+    private Button profileBtn; // For profile button
 
     private final paiementService paiementService = new paiementService();
     private Offre offre;
+    private User currentUser; // Store the current logged-in user
+
+    @FXML
+    public void initialize() {
+        datePaiementPicker.setValue(LocalDate.now());
+
+        // Try to get user from session if not explicitly set
+        if (currentUser == null) {
+            currentUser = UserSession.getInstance().getCurrentUser();
+            if (currentUser != null) {
+                updateUserDisplay();
+            }
+        }
+    }
 
     @FXML
     private void goHome() {
@@ -61,36 +74,41 @@ public class AjouterPaiement {
         }
     }
 
-    @FXML
-    public void initialize() {
-        try {
-            ObservableList<User> users = FXCollections.observableArrayList(getUsers());
-            userComboBox.setItems(users);
-            userComboBox.setConverter(new StringConverter<>() {
-                @Override
-                public String toString(User user) {
-                    return user != null ? user.getName() : "";
-                }
-                @Override
-                public User fromString(String string) {
-                    return null;
-                }
-            });
-            datePaiementPicker.setValue(LocalDate.now());
-        } catch (SQLException e) {
-            e.printStackTrace();
-            statusLabel.setText("Erreur lors du chargement des utilisateurs : " + e.getMessage());
-            statusLabel.setStyle("-fx-text-fill: red;");
+    /**
+     * Set the currently logged-in user for payment
+     * @param user The currently authenticated user
+     */
+    public void setCurrentUser(User user) {
+        this.currentUser = user;
+        updateUserDisplay();
+    }
+
+    /**
+     * Updates the UI elements that display user information
+     */
+    private void updateUserDisplay() {
+        if (userLabel != null && currentUser != null) {
+            userLabel.setText("User: " + currentUser.getName());
+            System.out.println("User display updated: " + currentUser.getName());
+        }
+
+        // Update the profile button text if it exists
+        if (profileBtn != null && currentUser != null) {
+            profileBtn.setText(currentUser.getName());
         }
     }
 
     @FXML
     public void ajouterPaiement() {
-        User selectedUser = userComboBox.getValue();
         LocalDate selectedDate = datePaiementPicker.getValue();
 
-        if (selectedUser == null || selectedDate == null || offre == null) {
-            statusLabel.setText("Veuillez sélectionner un utilisateur, une offre, et une date.");
+        // Double-check that we have a user
+        if (currentUser == null) {
+            currentUser = UserSession.getInstance().getCurrentUser();
+        }
+
+        if (currentUser == null || selectedDate == null || offre == null) {
+            statusLabel.setText("Error: User information or date missing.");
             statusLabel.setStyle("-fx-text-fill: red;");
             return;
         }
@@ -119,7 +137,7 @@ public class AjouterPaiement {
         Map<String, Object> params = new HashMap<>();
         params.put("amount", amountInCents);
         params.put("currency", "eur");
-        params.put("description", "Achat de l'offre: " + offre.getName());
+        params.put("description", "Achat de l'offre: " + offre.getName() + " par " + currentUser.getName());
 
         Map<String, Object> paymentMethodOptions = new HashMap<>();
         Map<String, Object> cardOptions = new HashMap<>();
@@ -140,7 +158,7 @@ public class AjouterPaiement {
         processPaymentController.setOnPaymentComplete(() -> {
             try {
                 LocalDateTime paymentDate = datePaiementPicker.getValue().atStartOfDay();
-                Paiement paiement = new Paiement(userComboBox.getValue(), offre, paymentDate);
+                Paiement paiement = new Paiement(currentUser, offre, paymentDate);
                 paiementService.ajouter(paiement);
                 statusLabel.setText("Paiement effectué avec succès !");
                 statusLabel.setStyle("-fx-text-fill: green;");
@@ -156,9 +174,5 @@ public class AjouterPaiement {
         stage.setTitle("Paiement par carte");
         stage.setScene(new Scene(root));
         stage.showAndWait();
-    }
-
-    private List<User> getUsers() throws SQLException {
-        return paiementService.getUsers();
     }
 }

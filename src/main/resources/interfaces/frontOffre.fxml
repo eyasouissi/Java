@@ -23,18 +23,13 @@
     <!-- Body -->
     <center>
         <VBox spacing="20" alignment="TOP_CENTER" style="-fx-padding: 20;">
-            <Label text="Nos Offres" styleClass="section-title" />
-            <Label text="Choisissez l'abonnement qui vous convient et profitez de nos services exclusifs"
+            <Label text="Our Offers" styleClass="section-title" />
+            <Label text="Choose the subscription that suits you and enjoy our exclusive services"
                    styleClass="section-subtitle" />
             <Pagination fx:id="offersPagination" maxPageIndicatorCount="5" styleClass="offers-pagination" />
         </VBox>
     </center>
 
-    <!-- Footer -->
-    <bottom>
-        <VBox alignment="CENTER" styleClass="footer-bar" style="-fx-padding: 10;">
-            <Label text="© Mentor - Tous droits réservés." />
-        </VBox>
-    </bottom>
+
 
 </BorderPane>
