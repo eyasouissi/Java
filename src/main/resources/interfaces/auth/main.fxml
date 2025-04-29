@@ -16,10 +16,11 @@
                 style="-fx-background-color: #EEA0FF; -fx-text-fill: white;
                -fx-background-radius: 20px; -fx-font-size: 14px;
                -fx-font-weight: bold; -fx-cursor: hand; -fx-padding: 5 15;" />
-        <Button fx:id="logoutButton" text="Logout" onAction="#handleLogout" layoutX="10" layoutY="10"/>
-
+        <Button fx:id="logoutButton" text="Logout" onAction="#handleLogout"
+                style="-fx-background-color: #ff4757; -fx-text-fill: white;
+               -fx-background-radius: 20px; -fx-font-size: 14px;
+               -fx-font-weight: bold; -fx-cursor: hand; -fx-padding: 5 15;" />
     </HBox>
-
 
     <!-- Main Content -->
     <VBox alignment="CENTER" spacing="20"

@@ -1,14 +1,9 @@
 package tn.esprit.entities;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import java.time.Instant;
 import java.util.Objects;
 
-@Entity
-@Table(name = "prohibited_word")
 public class ProhibitedWord {
-
     public enum Category {
         PROFANITY,
         HATE_SPEECH,
@@ -16,42 +11,24 @@ public class ProhibitedWord {
         OTHER
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(length = 255, unique = true, nullable = false)
-    @NotBlank(message = "Word cannot be blank")
     private String word;
-
-    @Enumerated(EnumType.STRING)
-    @Column(length = 50, nullable = false)
     private Category category;
-
-    @Column(nullable = false)
-    @Min(value = 1, message = "Severity must be at least 1")
-    @Max(value = 5, message = "Severity must be at most 5")
-    private Integer severity = 1;
-
-    @Column(nullable = false, updatable = false)
+    private int severity = 1;
     private Instant createdAt;
-
-    // Lifecycle callback
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = Instant.now();
-    }
 
     // Constructors
     public ProhibitedWord() {
+        this.createdAt = Instant.now();
     }
 
     public ProhibitedWord(String word, Category category) {
+        this();
         this.word = word;
         this.category = category;
     }
 
-    public ProhibitedWord(String word, Category category, Integer severity) {
+    public ProhibitedWord(String word, Category category, int severity) {
         this(word, category);
         this.severity = severity;
     }
@@ -81,11 +58,11 @@ public class ProhibitedWord {
         this.category = category;
     }
 
-    public Integer getSeverity() {
+    public int getSeverity() {
         return severity;
     }
 
-    public void setSeverity(Integer severity) {
+    public void setSeverity(int severity) {
         this.severity = severity;
     }
 
@@ -133,7 +110,7 @@ public class ProhibitedWord {
     public static class Builder {
         private String word;
         private Category category;
-        private Integer severity = 1;
+        private int severity = 1;
 
         public Builder word(String word) {
             this.word = word;
@@ -145,7 +122,7 @@ public class ProhibitedWord {
             return this;
         }
 
-        public Builder severity(Integer severity) {
+        public Builder severity(int severity) {
             this.severity = severity;
             return this;
         }

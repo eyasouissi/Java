@@ -1,53 +1,22 @@
 package tn.esprit.entities;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Entity
-@Table(name = "forum")
 public class Forum {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(length = 255, nullable = false)
-    @NotBlank(message = "Please fill this field")
     private String title;
-
-    @Column(length = 255, nullable = false)
-    @NotBlank(message = "Please fill this field")
-    @Size(max = 255, message = "Description cannot be longer than 255 characters")
     private String description;
-
-    @Column(nullable = true)
-    private Integer totalPosts = 0;
-
-    @OneToMany(mappedBy = "forum", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    private int totalPosts = 0;
     private List<Post> posts = new ArrayList<>();
-
-    @Column(nullable = true)
-    private Boolean isPublic = false;
-
-    @Column(nullable = false)
-    @NotNull(message = "Creation date should not be blank")
+    private boolean isPublic = false; // using primitive boolean
     private LocalDateTime createdAt;
-
-    @Column(nullable = false)
-    @NotNull(message = "Update date should not be blank")
     private LocalDateTime updatedAt;
-
-    @Column(nullable = false)
-    private Integer views = 0;
-
-    @Column(length = 255, nullable = true)
+    private int views = 0;
     private String topics;
 
-    // Constructors
     public Forum() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
@@ -60,139 +29,86 @@ public class Forum {
     }
 
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
+    public String getTitle() { return title; }
     public void setTitle(String title) {
         this.title = title;
+        this.updatedAt = LocalDateTime.now();
     }
 
-    public String getDescription() {
-        return description;
-    }
-
+    public String getDescription() { return description; }
     public void setDescription(String description) {
         this.description = description;
+        this.updatedAt = LocalDateTime.now();
     }
 
-    public Integer getTotalPosts() {
-        return totalPosts;
-    }
+    public int getTotalPosts() { return totalPosts; }
+    public void setTotalPosts(int totalPosts) { this.totalPosts = totalPosts; }
 
-    public void setTotalPosts(Integer totalPosts) {
-        this.totalPosts = totalPosts;
-    }
-
-    public List<Post> getPosts() {
-        return posts;
-    }
-
+    public List<Post> getPosts() { return posts; }
     public void setPosts(List<Post> posts) {
         this.posts = posts;
+        this.totalPosts = posts.size(); // also update totalPosts when setting posts
     }
 
-    public Boolean isPublic() {
-        return isPublic;
-    }
+    // Return type changed to primitive boolean
+    public boolean isPublic() { return isPublic; }
 
-    public void setPublic(Boolean isPublic) {
-        this.isPublic = isPublic;
-    }
+    // Setter remains the same
+    public void setPublic(boolean isPublic) { this.isPublic = isPublic; }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
+    public int getViews() { return views; }
+    public void setViews(int views) { this.views = views; }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+    public String getTopics() { return topics; }
+    public void setTopics(String topics) { this.topics = topics; }
 
-    public Integer getViews() {
-        return views;
-    }
-
-    public void setViews(Integer views) {
-        this.views = views;
-    }
-
-    public String getTopics() {
-        return topics;
-    }
-
-    public void setTopics(String topics) {
-        this.topics = topics;
-    }
-
-    // Relationship management methods
     public void addPost(Post post) {
         if (!posts.contains(post)) {
             posts.add(post);
-            post.setForum(this);
-            this.totalPosts = posts.size();
+            totalPosts = posts.size();
         }
     }
 
     public void removePost(Post post) {
         if (posts.remove(post)) {
-            post.setForum(null);
-            this.totalPosts = posts.size();
+            totalPosts = posts.size();
         }
     }
 
-    // Business methods
     public void incrementViews() {
         this.views++;
     }
 
-    // toString() method
     @Override
     public String toString() {
         return "Forum{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
                 ", totalPosts=" + totalPosts +
-                ", postsCount=" + posts.size() +
-                ", isPublic=" + isPublic +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                ", views=" + views +
-                ", topics='" + topics + '\'' +
                 '}';
     }
 
-    // equals() method
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Forum forum = (Forum) o;
         return Objects.equals(id, forum.id) &&
-                Objects.equals(title, forum.title) &&
-                Objects.equals(createdAt, forum.createdAt);
+                Objects.equals(title, forum.title);
     }
 
-    // hashCode() method
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, createdAt);
+        return Objects.hash(id, title);
     }
 
     // Builder pattern
@@ -203,7 +119,7 @@ public class Forum {
     public static class Builder {
         private String title;
         private String description;
-        private Boolean isPublic = false;
+        private boolean isPublic = false; // using primitive boolean
         private String topics;
 
         public Builder title(String title) {
@@ -216,7 +132,7 @@ public class Forum {
             return this;
         }
 
-        public Builder isPublic(Boolean isPublic) {
+        public Builder isPublic(boolean isPublic) {
             this.isPublic = isPublic;
             return this;
         }

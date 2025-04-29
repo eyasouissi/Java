@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane style="-fx-background-color: #f5f5f5;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.controllers.auth.SignUp">
+<AnchorPane style="-fx-background-color: #f5f5f5;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.controllers.auth.SignUpStudent">
 
     <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
 
@@ -13,7 +13,7 @@
                      -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0.2, 0, 4);">
 
             <!-- Title -->
-            <Text text="Create Account"
+            <Text text="Student Registration"
                   style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-fill: #5d236a;" />
 
             <!-- Form Fields -->
@@ -59,21 +59,6 @@
                 <ComboBox fx:id="countryComboBox" promptText="Select your country"
                           style="-fx-pref-width: 300px; -fx-pref-height: 40px; -fx-font-size: 14px;
                                  -fx-background-radius: 10px; -fx-border-radius: 10px; -fx-border-color: #EEA0FF;" />
-            </VBox>
-
-            <!-- Role Selection -->
-            <VBox spacing="5" style="-fx-pref-width: 300px;">
-                <Label text="Register as:" style="-fx-font-size: 14px; -fx-text-fill: #666;" />
-                <HBox alignment="CENTER_LEFT" spacing="20">
-                    <HBox spacing="5">
-                        <RadioButton fx:id="studentRadio" selected="true" toggleGroup="$roleGroup"/>
-                        <Label text="Student" style="-fx-font-size: 14px; -fx-text-fill: #666;" />
-                    </HBox>
-                    <HBox spacing="5">
-                        <RadioButton fx:id="tutorRadio" toggleGroup="$roleGroup"/>
-                        <Label text="Tutor" style="-fx-font-size: 14px; -fx-text-fill: #666;" />
-                    </HBox>
-                </HBox>
             </VBox>
 
             <!-- Error Message -->

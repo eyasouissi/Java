@@ -1,8 +1,5 @@
 package tn.esprit.entities;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import org.hibernate.validator.constraints.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -10,60 +7,20 @@ import java.util.List;
 import java.util.Set;
 import java.util.Objects;
 
-@Entity
-@Table(name = "post")
 public class Post {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     private Forum forum;
-
-    @Column(length = 2000, nullable = false)
-    @NotBlank(message = "Content cannot be empty.")
-    @Size(max = 2000, message = "Content cannot exceed 2000 characters.")
-    @Pattern(regexp = "^(?i)(?!.*\\b(admin|root|sudo)\\b).*$",
-            message = "Content contains prohibited terms")
     private String content;
-
-    @Column(nullable = false)
     private LocalDateTime createdAt;
-
-    @Column(nullable = false)
     private LocalDateTime updatedAt;
-
-    @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
-    private List<Comment> comments = new ArrayList<>();
-
-    @Column(nullable = false)
-    private Integer likes = 0;
-
-    @ElementCollection
-    @CollectionTable(name = "post_photos", joinColumns = @JoinColumn(name = "post_id"))
-    @Column(name = "photo_url")
-    @Size(max = 10, message = "You can upload up to 10 photos maximum.")
+    private int likes ;
     private Set<String> photos = new HashSet<>();
-
-    @Column(length = 255, nullable = true)
-    @URL(message = "Please enter a valid URL")
-    @Pattern(regexp = "^(https?://)(.*\\.(gif))$", message = "URL must point to a GIF file")
     private String gifUrl;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
     private User user;
 
-    @ManyToMany
-    @JoinTable(
-            name = "post_likes",
-            joinColumns = @JoinColumn(name = "post_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
+    // Relationships
+    private List<Comment> comments = new ArrayList<>();
     private Set<User> likedByUsers = new HashSet<>();
-
-    @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     private List<Notif> notifications = new ArrayList<>();
 
     // Constructors
@@ -120,7 +77,7 @@ public class Post {
         this.updatedAt = updatedAt;
     }
 
-    public Integer getLikes() {
+    public int getLikes() {
         return likes;
     }
 

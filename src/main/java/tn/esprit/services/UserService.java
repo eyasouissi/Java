@@ -1,21 +1,31 @@
 package tn.esprit.services;
 
+import jakarta.mail.MessagingException;
 import org.mindrot.jbcrypt.BCrypt;
 import tn.esprit.entities.User;
 import tn.esprit.tools.MyDataBase;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 public class UserService implements IServices<User> {
     private Connection cnx;
     private static UserService instance;
+    private EmailService emailService;
+    private boolean emailServiceAvailable = true;
 
     public UserService() {
         this.cnx = MyDataBase.getInstance().getCnx();
+        initializeEmailService();
     }
 
+    private void initializeEmailService() {
+        this.emailService = new EmailService();
+        this.emailServiceAvailable = true;
+        System.out.println("🔥 Email verification FORCE-ENABLED");
+    }
     public static UserService getInstance() {
         if (instance == null) {
             instance = new UserService();
@@ -23,50 +33,65 @@ public class UserService implements IServices<User> {
         return instance;
     }
 
+    public boolean isEmailServiceAvailable() {
+        return emailServiceAvailable;
+    }
+
+    public EmailService getEmailService() {
+        return emailService;
+    }
+
+    public Connection getCnx() {
+        return this.cnx;
+    }
+
     @Override
     public void ajouter(User user) {
         try {
-            // Validate required fields
             if (user.getEmail() == null || user.getEmail().isEmpty() ||
                     user.getPassword() == null || user.getPassword().isEmpty() ||
                     user.getName() == null || user.getName().isEmpty()) {
                 throw new IllegalArgumentException("Email, password and name are required");
             }
 
-            // Hash password
-            String salt = BCrypt.gensalt();
-            String hashedPassword = BCrypt.hashpw(user.getPassword(), salt);
+            String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
             user.setPassword(hashedPassword);
 
-            // Handle roles
+            user.setVerified(false);
+            user.setVerificationToken(VerificationService.generateVerificationToken());
+            user.setVerificationTokenExpiry(VerificationService.calculateExpiryDate());
+
             Set<String> roles = user.getRoles() != null ? user.getRoles() : new HashSet<>();
             if (roles.isEmpty()) {
                 roles.add("ROLE_STUDENT");
             }
             String rolesJson = "[\"" + String.join("\",\"", roles) + "\"]";
 
-            String query = "INSERT INTO user (email, password, name, roles, is_restricted, date_creation, " +
-                    "is_verified, bio, gender, diplome, speciality, age, country, pfp, bg) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO user (email, password, name, roles, is_restricted, " +
+                    "date_creation, is_verified, verification_token, verification_token_expiry, " +
+                    "bio, gender, diplome, speciality, age, country, pfp, bg) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             try (PreparedStatement statement = cnx.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                 statement.setString(1, user.getEmail());
                 statement.setString(2, user.getPassword());
                 statement.setString(3, user.getName());
                 statement.setString(4, rolesJson);
-                statement.setBoolean(5, user.getRestricted() != null && user.getRestricted());
+                statement.setBoolean(5, user.isRestricted());
                 statement.setTimestamp(6, Timestamp.valueOf(
                         user.getCreationDate() != null ? user.getCreationDate() : LocalDateTime.now()
                 ));
-                statement.setBoolean(7, user.getVerified() != null && user.getVerified());
-                statement.setString(8, user.getBio() != null ? user.getBio() : "");
-                statement.setString(9, user.getGender() != null ? user.getGender() : "");
-                statement.setString(10, user.getDiplome() != null ? user.getDiplome() : "");
-                statement.setString(11, user.getSpeciality() != null ? user.getSpeciality() : "");
-                statement.setObject(12, user.getAge(), Types.INTEGER);
-                statement.setString(13, user.getCountry() != null ? user.getCountry() : "");
-                statement.setString(14, user.getpfp() != null ? user.getpfp() : "");
-                statement.setString(15, user.getbg() != null ? user.getbg() : "");
+                statement.setBoolean(7, false);
+                statement.setString(8, user.getVerificationToken());
+                statement.setTimestamp(9, Timestamp.valueOf(user.getVerificationTokenExpiry()));
+                statement.setString(10, user.getBio() != null ? user.getBio() : "");
+                statement.setString(11, user.getGender() != null ? user.getGender() : "");
+                statement.setString(12, user.getDiplome() != null ? user.getDiplome() : "");
+                statement.setString(13, user.getSpeciality() != null ? user.getSpeciality() : "");
+                statement.setObject(14, user.getAge(), Types.INTEGER);
+                statement.setString(15, user.getCountry() != null ? user.getCountry() : "");
+                statement.setString(16, user.getPfp() != null ? user.getPfp() : "");
+                statement.setString(17, user.getBg() != null ? user.getBg() : "");
 
                 int affectedRows = statement.executeUpdate();
 
@@ -79,12 +104,42 @@ public class UserService implements IServices<User> {
                         user.setId(generatedKeys.getLong(1));
                     }
                 }
+
+                sendVerificationEmail(user);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to add user. Database constraint violation. Error: " + e.getMessage(), e);
+            throw new RuntimeException("Database error during registration: " + e.getMessage(), e);
         }
     }
 
+    private void sendVerificationEmail(User user) {
+        try {
+            String verificationLink = VerificationServer.getVerificationUrl(user.getVerificationToken());
+            String subject = "Account Verification - WorkAway";
+
+            String htmlBody = String.format("""
+            <html>
+                <body style="font-family: Arial, sans-serif; padding: 20px;">
+                    <h2>WorkAway Account Verification</h2>
+                    <p>Hello %s,</p>
+                    <p>Please click below to verify:</p>
+                    <a href="%s" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                        Verify Account
+                    </a>
+                    <p>Or copy to browser: %s</p>
+                    <p>Link expires in 24 hours.</p>
+                </body>
+            </html>
+            """, user.getName(), verificationLink, verificationLink);
+
+            emailService.sendEmail(user.getEmail(), subject, htmlBody);
+            System.out.println("🔥 Verification email sent to: " + user.getEmail());
+        } catch (Exception e) {
+            System.err.println("❌ Email failed, using manual verification");
+            System.out.println("Manual link: " +
+                    VerificationServer.getVerificationUrl(user.getVerificationToken()));
+        }
+    }
     @Override
     public void modifier(User user) {
         try {
@@ -110,8 +165,8 @@ public class UserService implements IServices<User> {
                 pst.setString(6, user.getSpeciality());
                 pst.setObject(7, user.getAge(), Types.INTEGER);
                 pst.setString(8, user.getCountry());
-                pst.setString(9, user.getpfp());
-                pst.setString(10, user.getbg());
+                pst.setString(9, user.getPfp());
+                pst.setString(10, user.getBg());
                 pst.setLong(11, user.getId());
 
                 int rowsUpdated = pst.executeUpdate();
@@ -126,28 +181,26 @@ public class UserService implements IServices<User> {
         }
     }
 
-    public void updatePassword(User user) {
+    public boolean updatePassword(String email, String newPassword) {
         try {
-            if (user.getPassword() == null || user.getPassword().isEmpty()) {
-                throw new IllegalArgumentException("Password cannot be empty");
+            User user = getByEmail(email);
+            if (user == null) {
+                return false;
             }
 
-            String salt = BCrypt.gensalt();
-            String hashedPassword = BCrypt.hashpw(user.getPassword(), salt);
-            user.setPassword(hashedPassword);
+            String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
 
-            String query = "UPDATE user SET password = ? WHERE id = ?";
+            String query = "UPDATE user SET password = ? WHERE email = ?";
             try (PreparedStatement pst = cnx.prepareStatement(query)) {
-                pst.setString(1, user.getPassword());
-                pst.setLong(2, user.getId());
+                pst.setString(1, hashedPassword);
+                pst.setString(2, email);
 
                 int rowsUpdated = pst.executeUpdate();
-                if (rowsUpdated > 0) {
-                    System.out.println("Password updated successfully!");
-                }
+                return rowsUpdated > 0;
             }
         } catch (SQLException e) {
             System.err.println("Error updating password: " + e.getMessage());
+            return false;
         }
     }
 
@@ -165,6 +218,11 @@ public class UserService implements IServices<User> {
         }
     }
 
+    @Override
+    public User getOne(User user) {
+        return getById(user.getId());
+    }
+
     public User getById(long id) {
         String query = "SELECT * FROM user WHERE id = ?";
         try (PreparedStatement pst = cnx.prepareStatement(query)) {
@@ -172,24 +230,7 @@ public class UserService implements IServices<User> {
             ResultSet rs = pst.executeQuery();
 
             if (rs.next()) {
-                User user = new User();
-                user.setId(rs.getLong("id"));
-                user.setEmail(rs.getString("email"));
-                user.setPassword(rs.getString("password"));
-                user.setName(rs.getString("name"));
-                user.setVerified(rs.getBoolean("is_verified"));
-                user.setRestricted(rs.getBoolean("is_restricted"));
-                user.setCreationDate(rs.getTimestamp("date_creation").toLocalDateTime());
-                user.setBio(rs.getString("bio"));
-                user.setGender(rs.getString("gender"));
-                user.setDiplome(rs.getString("diplome"));
-                user.setSpeciality(rs.getString("speciality"));
-                user.setAge(rs.getInt("age"));
-                user.setCountry(rs.getString("country"));
-                user.setpfp(rs.getString("pfp"));
-                user.setbg(rs.getString("bg"));
-
-                return user;
+                return mapResultSetToUser(rs);
             }
         } catch (SQLException e) {
             System.err.println("Error fetching user by ID: " + e.getMessage());
@@ -204,24 +245,7 @@ public class UserService implements IServices<User> {
             ResultSet rs = pst.executeQuery();
 
             if (rs.next()) {
-                User user = new User();
-                user.setId(rs.getLong("id"));
-                user.setEmail(rs.getString("email"));
-                user.setPassword(rs.getString("password"));
-                user.setName(rs.getString("name"));
-                user.setVerified(rs.getBoolean("is_verified"));
-                user.setRestricted(rs.getBoolean("is_restricted"));
-                user.setCreationDate(rs.getTimestamp("date_creation").toLocalDateTime());
-                user.setBio(rs.getString("bio"));
-                user.setGender(rs.getString("gender"));
-                user.setDiplome(rs.getString("diplome"));
-                user.setSpeciality(rs.getString("speciality"));
-                user.setAge(rs.getInt("age"));
-                user.setCountry(rs.getString("country"));
-                user.setpfp(rs.getString("pfp"));
-                user.setbg(rs.getString("bg"));
-
-                return user;
+                return mapResultSetToUser(rs);
             }
         } catch (SQLException e) {
             System.err.println("Error fetching user by email: " + e.getMessage());
@@ -229,13 +253,53 @@ public class UserService implements IServices<User> {
         return null;
     }
 
-    @Override
-    public User getOne(User user) {
-        return getById(user.getId());
-    }
+    private User mapResultSetToUser(ResultSet rs) throws SQLException {
+        User user = new User();
+        user.setId(rs.getLong("id"));
+        user.setEmail(rs.getString("email"));
+        user.setPassword(rs.getString("password"));
+        user.setName(rs.getString("name"));
+        user.setVerified(rs.getBoolean("is_verified"));
+        user.setRestricted(rs.getBoolean("is_restricted"));
+        user.setCreationDate(rs.getTimestamp("date_creation").toLocalDateTime());
+        user.setBio(rs.getString("bio"));
+        user.setGender(rs.getString("gender"));
+        user.setDiplome(rs.getString("diplome"));
+        user.setSpeciality(rs.getString("speciality"));
+        user.setAge(rs.getInt("age"));
+        user.setCountry(rs.getString("country"));
+        user.setPfp(rs.getString("pfp"));
+        user.setBg(rs.getString("bg"));
 
-    public void supprimer(long id) {
-        supprimer((int) id);
+        try {
+            user.setVerificationToken(rs.getString("verification_token"));
+        } catch (SQLException e) {
+            user.setVerificationToken(null);
+        }
+
+        try {
+            Timestamp expiry = rs.getTimestamp("verification_token_expiry");
+            user.setVerificationTokenExpiry(expiry != null ? expiry.toLocalDateTime() : null);
+        } catch (SQLException e) {
+            user.setVerificationTokenExpiry(null);
+        }
+
+        String rolesJson = rs.getString("roles");
+        if (rolesJson != null && !rolesJson.isEmpty()) {
+            try {
+                JSONArray jsonArray = new JSONArray(rolesJson);
+                Set<String> roles = new HashSet<>();
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    roles.add(jsonArray.getString(i));
+                }
+                user.setRoles(roles);
+            } catch (JSONException e) {
+                System.err.println("Error parsing roles JSON: " + e.getMessage());
+                user.setRoles(new HashSet<>(Collections.singletonList("ROLE_STUDENT")));
+            }
+        }
+
+        return user;
     }
 
     @Override
@@ -245,23 +309,7 @@ public class UserService implements IServices<User> {
         try (Statement st = cnx.createStatement();
              ResultSet rs = st.executeQuery(query)) {
             while (rs.next()) {
-                User user = new User();
-                user.setId(rs.getLong("id"));
-                user.setEmail(rs.getString("email"));
-                user.setName(rs.getString("name"));
-                user.setVerified(rs.getBoolean("is_verified"));
-                user.setRestricted(rs.getBoolean("is_restricted"));
-                user.setCreationDate(rs.getTimestamp("date_creation").toLocalDateTime());
-                user.setBio(rs.getString("bio"));
-                user.setGender(rs.getString("gender"));
-                user.setDiplome(rs.getString("diplome"));
-                user.setSpeciality(rs.getString("speciality"));
-                user.setAge(rs.getInt("age"));
-                user.setCountry(rs.getString("country"));
-                user.setpfp(rs.getString("pfp"));
-                user.setbg(rs.getString("bg"));
-
-                users.add(user);
+                users.add(mapResultSetToUser(rs));
             }
         } catch (SQLException e) {
             System.err.println("Error fetching users: " + e.getMessage());
@@ -269,16 +317,100 @@ public class UserService implements IServices<User> {
         return users;
     }
 
+    public boolean verifyUser(String token) {
+        try {
+            String query = "SELECT * FROM user WHERE verification_token=? AND is_verified=false";
+            try (PreparedStatement stmt = cnx.prepareStatement(query)) {
+                stmt.setString(1, token);
+                ResultSet rs = stmt.executeQuery();
+
+                if (rs.next()) {
+                    LocalDateTime expiry = rs.getTimestamp("verification_token_expiry").toLocalDateTime();
+                    if (expiry.isBefore(LocalDateTime.now())) {
+                        return false; // Token expired
+                    }
+
+                    String update = "UPDATE user SET is_verified=true, verification_token=NULL, " +
+                            "verification_token_expiry=NULL WHERE id=?";
+                    try (PreparedStatement updateStmt = cnx.prepareStatement(update)) {
+                        updateStmt.setLong(1, rs.getLong("id"));
+                        return updateStmt.executeUpdate() > 0;
+                    }
+                }
+            }
+            return false;
+        } catch (SQLException e) {
+            throw new RuntimeException("Verification failed", e);
+        }
+    }
+
     public boolean verifyPassword(String email, String plainPassword) {
         try {
-            User user = getByEmail(email);
-            if (user == null || user.getPassword() == null) {
+            if (plainPassword == null || plainPassword.isEmpty()) {
+                System.err.println("Empty password provided");
                 return false;
             }
-            return BCrypt.checkpw(plainPassword, user.getPassword());
+
+            User user = getByEmail(email);
+            if (user == null) {
+                System.err.println("User not found for email: " + email);
+                return false;
+            }
+
+            if (user.getPassword() == null || user.getPassword().isEmpty()) {
+                System.err.println("No password stored for user: " + email);
+                return false;
+            }
+
+            boolean matches = BCrypt.checkpw(plainPassword, user.getPassword());
+            return matches;
         } catch (Exception e) {
-            System.err.println("Verification error: " + e.getMessage());
+            System.err.println("Password verification error: " + e.getMessage());
             return false;
+        }
+    }
+
+    public boolean resendVerificationEmail(String email) {
+        try {
+            User user = getByEmail(email);
+            if (user == null) {
+                return false;
+            }
+
+            if (user.getVerificationTokenExpiry() == null ||
+                    user.getVerificationTokenExpiry().isBefore(LocalDateTime.now())) {
+                user.setVerificationToken(VerificationService.generateVerificationToken());
+                user.setVerificationTokenExpiry(VerificationService.calculateExpiryDate());
+
+                String update = "UPDATE user SET verification_token=?, verification_token_expiry=? WHERE id=?";
+                try (PreparedStatement pst = cnx.prepareStatement(update)) {
+                    pst.setString(1, user.getVerificationToken());
+                    pst.setTimestamp(2, Timestamp.valueOf(user.getVerificationTokenExpiry()));
+                    pst.setLong(3, user.getId());
+                    pst.executeUpdate();
+                }
+            }
+
+            sendVerificationEmail(user);
+            return true;
+        } catch (Exception e) {
+            System.err.println("Error resending verification: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public void checkAndUpdateSchema() throws SQLException {
+        DatabaseMetaData dbMetaData = cnx.getMetaData();
+        String[] columnsToCheck = {"verification_token", "verification_token_expiry"};
+
+        for (String column : columnsToCheck) {
+            ResultSet rs = dbMetaData.getColumns(null, null, "user", column);
+            if (!rs.next()) {
+                try (Statement stmt = cnx.createStatement()) {
+                    stmt.execute("ALTER TABLE user ADD COLUMN " + column +
+                            (column.equals("verification_token") ? " VARCHAR(255)" : " DATETIME"));
+                }
+            }
         }
     }
 }

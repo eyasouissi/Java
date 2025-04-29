@@ -13,23 +13,23 @@
             <!-- Header -->
             <Label text="Edit Profile" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #6a3093;" />
 
-            <!-- Profile Picture Section -->
-            <VBox spacing="10" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
-                <Label text="Profile Picture" style="-fx-font-weight: bold; -fx-text-fill: #555;"/>
-                <HBox spacing="20" alignment="CENTER_LEFT">
-                    <StackPane>
-                        <ImageView fx:id="profileImageView" fitHeight="100" fitWidth="100" preserveRatio="true">
-                            <clip>
-                                <Circle radius="50" centerX="50" centerY="50"/>
-                            </clip>
-                        </ImageView>
-                        <Circle radius="50" centerX="50" centerY="50" fill="transparent" stroke="#b399d4" strokeWidth="2"/>
-                    </StackPane>
-                    <Button text="Change" onAction="#handleChangeProfilePicture"
-                            style="-fx-background-color: #b399d4; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-pref-width: 100; -fx-pref-height: 35; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);"/>
-                </HBox>
-            </VBox>
-
+            <!-- In the Profile Picture Section -->
+            <HBox spacing="20" alignment="CENTER_LEFT">
+                <StackPane>
+                    <ImageView fx:id="profileImageView" fitHeight="100" fitWidth="100" preserveRatio="true">
+                        <clip>
+                            <Circle radius="50" centerX="50" centerY="50"/>
+                        </clip>
+                    </ImageView>
+                    <Circle radius="50" centerX="50" centerY="50" fill="transparent" stroke="#b399d4" strokeWidth="2"/>
+                </StackPane>
+                <Button text="Change" onAction="#handleChangeProfilePicture"
+                        style="-fx-background-color: #b399d4; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-pref-width: 100; -fx-pref-height: 35; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);"/>
+                <Button text="Generate PFP" onAction="#handleGenerateProfilePicture"
+                        style="-fx-background-color: #6a3093; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-pref-width: 120; -fx-pref-height: 35; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);"/>
+                <Button text="Register Face" onAction="#handleRegisterFace"
+                        style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-pref-width: 120; -fx-pref-height: 35; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);"/>
+            </HBox>
             <!-- Background Image Section -->
             <VBox spacing="10" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
                 <Label text="Background Image" style="-fx-font-weight: bold; -fx-text-fill: #555;"/>

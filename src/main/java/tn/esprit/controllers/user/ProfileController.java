@@ -5,10 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.image.*;
-import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -19,7 +16,6 @@ import tn.esprit.tools.HostServicesProvider;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,6 +38,7 @@ public class ProfileController {
         this.currentUser = user;
         updateUI();
     }
+
     @FXML
     private void handleLogout(ActionEvent event) {
         try {
@@ -71,7 +68,6 @@ public class ProfileController {
             editButton.setText("Edit");
         }
         editButton.setOnAction(event -> handleEditProfile());
-        diplomaLink.setOnAction(event -> openDiplomaPDF());
     }
 
     private void updateUI() {
@@ -82,22 +78,24 @@ public class ProfileController {
             bioLabel.setText(currentUser.getBio() != null ? currentUser.getBio() : "No bio yet");
             specialityLabel.setText(currentUser.getSpeciality() != null ? currentUser.getSpeciality() : "Not specified");
 
+            // Handle diploma display
             if (currentUser.getDiplome() != null && !currentUser.getDiplome().isEmpty()) {
                 File diplomaFile = FileUploadUtil.getUploadedFile(currentUser.getDiplome());
                 if (diplomaFile != null && diplomaFile.exists()) {
                     diplomaLabel.setText(diplomaFile.getName());
                     diplomaLink.setVisible(true);
+                    diplomaLink.setOnAction(event -> openDiplomaPDF());
                 } else {
                     diplomaLabel.setText("File not found");
                     diplomaLink.setVisible(false);
                 }
             } else {
-                diplomaLabel.setText("Not specified");
+                diplomaLabel.setText("No diploma uploaded");
                 diplomaLink.setVisible(false);
             }
 
-            loadImage(profileImageView, currentUser.getpfp(), "/assets/images/pfp/default-profile.png");
-            loadImage(backgroundImageView, currentUser.getbg(), "/assets/images/bg/default-bg.jpg");
+            loadImage(profileImageView, currentUser.getPfp(), "/assets/images/pfp/default-profile.png");
+            loadImage(backgroundImageView, currentUser.getBg(), "/assets/images/bg/default-bg.jpg");
         }
     }
 
@@ -111,45 +109,19 @@ public class ProfileController {
 
             File diplomaFile = FileUploadUtil.getUploadedFile(currentUser.getDiplome());
             if (diplomaFile == null || !diplomaFile.exists()) {
-                showAlert("Error", "Diploma file not found:\n" + currentUser.getDiplome());
+                showAlert("Error", "Diploma file not found");
                 return;
             }
 
-            // Debug output
-            System.out.println("Attempting to open file at: " + diplomaFile.getAbsolutePath());
-            System.out.println("File exists: " + diplomaFile.exists());
-            System.out.println("Can read: " + diplomaFile.canRead());
-
-            // Try multiple ways to open the file
-            try {
-                // First try with HostServices
-                javafx.application.HostServices hostServices = HostServicesProvider.getHostServices();
-                if (hostServices != null) {
-                    hostServices.showDocument(diplomaFile.getAbsolutePath());
-                    return;
-                }
-            } catch (Exception e) {
-                System.err.println("Failed to open with HostServices: " + e.getMessage());
+            javafx.application.HostServices hostServices = HostServicesProvider.getHostServices();
+            if (hostServices != null) {
+                hostServices.showDocument(diplomaFile.getAbsolutePath());
+            } else {
+                showAlert("Information",
+                        "Could not automatically open the PDF.\n" +
+                                "Please open the file manually at:\n" +
+                                diplomaFile.getAbsolutePath());
             }
-
-            // Fallback to Desktop API
-            try {
-                if (Desktop.isDesktopSupported()) {
-                    Desktop desktop = Desktop.getDesktop();
-                    if (desktop.isSupported(Desktop.Action.OPEN)) {
-                        desktop.open(diplomaFile);
-                        return;
-                    }
-                }
-            } catch (Exception e) {
-                System.err.println("Failed to open with Desktop API: " + e.getMessage());
-            }
-
-            // Final fallback - show path to user
-            showAlert("Information",
-                    "Could not automatically open the PDF.\n" +
-                            "Please open the file manually at:\n" +
-                            diplomaFile.getAbsolutePath());
 
         } catch (Exception e) {
             showAlert("Error", "Could not open diploma: " + e.getMessage());
@@ -160,12 +132,14 @@ public class ProfileController {
     private void loadImage(ImageView imageView, String path, String defaultPath) {
         try {
             if (path != null && !path.isEmpty()) {
+                // First try to load as resource
                 InputStream is = getClass().getResourceAsStream("/" + path);
                 if (is != null) {
                     imageView.setImage(new Image(is));
                     return;
                 }
 
+                // Then try to load as uploaded file
                 File file = FileUploadUtil.getUploadedFile(path);
                 if (file != null && file.exists()) {
                     imageView.setImage(new Image(file.toURI().toString()));
@@ -173,6 +147,7 @@ public class ProfileController {
                 }
             }
 
+            // Load default if specified
             if (defaultPath != null) {
                 InputStream defaultStream = getClass().getResourceAsStream(defaultPath);
                 if (defaultStream != null) {
@@ -191,6 +166,7 @@ public class ProfileController {
 
             EditProfileController controller = loader.getController();
             controller.setUserData(currentUser);
+            controller.setParentController(this);
 
             Stage stage = new Stage();
             stage.setTitle("Edit Profile");
@@ -203,11 +179,12 @@ public class ProfileController {
         }
     }
 
-    private void refreshUserData() {
+    public void refreshUserData() {
         UserService userService = new UserService();
         User updatedUser = userService.getById(currentUser.getId());
         if (updatedUser != null) {
-            setUserData(updatedUser);
+            currentUser = updatedUser;
+            updateUI();
         }
     }
 

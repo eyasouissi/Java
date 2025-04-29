@@ -14,7 +14,7 @@ public class UserServiceTest {
         Set<String> studentRoles = new HashSet<>();
         studentRoles.add("ROLE_STUDENT");
         student.setRoles(studentRoles);
-        student.setAge(20);
+        student.setAge(Integer.valueOf(20));
         student.setGender("Male");
         student.setCountry("Germany");
         student.setBio("Computer science student");

@@ -1,39 +1,17 @@
 package tn.esprit.entities;
 
-import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.Objects;
 
-@Entity
-@Table(name = "notif")
 public class Notif {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
     private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
     private User triggeredBy;
-
-    @Column(length = 20, nullable = false)
     private String type;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
     private Post post;
-
-    @Column(name = "is_read", nullable = false)
     private boolean isRead = false;
-
-    @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
-    // Constructors
     public Notif() {
         this.createdAt = Instant.now();
     }
@@ -47,77 +25,31 @@ public class Notif {
     }
 
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
+    public User getTriggeredBy() { return triggeredBy; }
+    public void setTriggeredBy(User triggeredBy) { this.triggeredBy = triggeredBy; }
+    public String getType() { return type; }
+    public void setType(String type) { this.type = type; }
+    public Post getPost() { return post; }
+    public void setPost(Post post) { this.post = post; }
+    public boolean isRead() { return isRead; }
+    public void setRead(boolean read) { isRead = read; }
+    public Instant getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public User getTriggeredBy() {
-        return triggeredBy;
-    }
-
-    public void setTriggeredBy(User triggeredBy) {
-        this.triggeredBy = triggeredBy;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Post getPost() {
-        return post;
-    }
-
-    public void setPost(Post post) {
-        this.post = post;
-    }
-
-    public boolean isRead() {
-        return isRead;
-    }
-
-    public void setRead(boolean read) {
-        isRead = read;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    // toString() method
     @Override
     public String toString() {
         return "Notif{" +
                 "id=" + id +
-                ", userId=" + (user != null ? user.getId() : null) +
-                ", triggeredById=" + (triggeredBy != null ? triggeredBy.getId() : null) +
                 ", type='" + type + '\'' +
-                ", postId=" + (post != null ? post.getId() : null) +
                 ", isRead=" + isRead +
                 ", createdAt=" + createdAt +
                 '}';
     }
 
-    // equals() method
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -128,13 +60,11 @@ public class Notif {
                 Objects.equals(createdAt, notif.createdAt);
     }
 
-    // hashCode() method
     @Override
     public int hashCode() {
         return Objects.hash(id, type, createdAt);
     }
 
-    // Builder pattern (optional)
     public static Builder builder() {
         return new Builder();
     }
@@ -166,7 +96,6 @@ public class Notif {
         }
 
         public Notif build() {
-
             return new Notif(user, triggeredBy, type, post);
         }
     }
