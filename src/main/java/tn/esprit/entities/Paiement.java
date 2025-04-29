@@ -1,30 +1,14 @@
 package tn.esprit.entities;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Entity
-@Table(name = "paiement")
 public class Paiement {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_paiement")
     private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_user", referencedColumnName = "id", nullable = false)
     private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_offre", referencedColumnName = "id_offre", nullable = false)
     private Offre offre;
-
-    @Column(name = "date_paiement", nullable = false)
     private LocalDateTime paymentDate;
 
-    // Constructors
     public Paiement() {
         this.paymentDate = LocalDateTime.now();
     }
@@ -40,39 +24,15 @@ public class Paiement {
         this.paymentDate = paymentDate;
     }
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
+    public Offre getOffre() { return offre; }
+    public void setOffre(Offre offre) { this.offre = offre; }
+    public LocalDateTime getPaymentDate() { return paymentDate; }
+    public void setPaymentDate(LocalDateTime paymentDate) { this.paymentDate = paymentDate; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Offre getOffre() {
-        return offre;
-    }
-
-    public void setOffre(Offre offre) {
-        this.offre = offre;
-    }
-
-    public LocalDateTime getPaymentDate() {
-        return paymentDate;
-    }
-
-    public void setPaymentDate(LocalDateTime paymentDate) {
-        this.paymentDate = paymentDate;
-    }
-
-    // toString() method
     @Override
     public String toString() {
         return "Paiement{" +
@@ -83,7 +43,6 @@ public class Paiement {
                 '}';
     }
 
-    // equals() method
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -93,13 +52,11 @@ public class Paiement {
                 Objects.equals(paymentDate, paiement.paymentDate);
     }
 
-    // hashCode() method
     @Override
     public int hashCode() {
         return Objects.hash(id, paymentDate);
     }
 
-    // Builder pattern
     public static Builder builder() {
         return new Builder();
     }
