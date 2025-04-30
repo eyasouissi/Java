@@ -1,0 +1,10 @@
+esprit\controllers\project\AddProjectController.class
+esprit\services\IServices.class
+esprit\services\project\ProjectService.class
+esprit\tools\MyDataBase.class
+esprit\controllers\group\GroupsController.class
+esprit\entities\group\GroupStudent$Builder.class
+esprit\entities\group\GroupStudent.class
+esprit\controllers\project\StatsController.class
+module-info.class
+esprit\entities\project\Project.class

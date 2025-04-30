@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import org.fxmisc.richtext.StyleClassedTextArea?>
+
+<VBox xmlns="http://javafx.com/javafx/11.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="esprit.controllers.project.AddProjectController"
+      spacing="20"
+      alignment="TOP_CENTER"
+      style="-fx-background-color: #f5f7fa; -fx-padding: 25;"
+      prefWidth="800" prefHeight="900">
+
+    <!-- Navbar -->
+    <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-background-color: #2c3e50; -fx-padding: 10;">
+        <Button text="Groups" onAction="#goToGroups"
+                styleClass="nav-button"/>
+        <Button text="Projects" onAction="#goToProjects"
+                styleClass="nav-button"/>
+    </HBox>
+
+    <!-- Titre -->
+    <Label text="Créer un Nouveau Projet"
+           style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+
+    <Separator style="-fx-padding: 0 0 10 0;"/>
+
+    <!-- Formulaire principal -->
+    <GridPane hgap="20" vgap="20"
+              style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 0, 2);">
+        <columnConstraints>
+            <ColumnConstraints halignment="RIGHT" minWidth="150"/>
+            <ColumnConstraints hgrow="ALWAYS"/>
+        </columnConstraints>
+
+        <!-- Champ Titre -->
+        <Label text="Titre :" style="-fx-text-fill: #7f8c8d;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="titleField" promptText="Entrez le titre" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+        <!-- Champ Description -->
+        <Label text="Description :" style="-fx-text-fill: #7f8c8d;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <VBox spacing="8" GridPane.rowIndex="1" GridPane.columnIndex="1">
+
+            <!-- Toolbar améliorée -->
+            <ToolBar fx:id="formatToolbar" style="-fx-background-color: #f0f0f0;">
+                <ComboBox fx:id="fontFamilyCombo" promptText="Police" prefWidth="150"/>
+                <ComboBox fx:id="fontSizeCombo" promptText="Taille" prefWidth="70"/>
+                <ColorPicker fx:id="textColorPicker"/>
+
+                <ToggleButton fx:id="boldButton" text="B" style="-fx-font-weight: bold;"/>
+                <ToggleButton fx:id="italicButton" text="I" style="-fx-font-style: italic;"/>
+                <ToggleButton fx:id="underlineButton" text="U" style="-fx-underline: true;"/>
+
+                <Button text="Aligner Gauche" onAction="#alignLeft"/>
+                <Button text="Centrer" onAction="#alignCenter"/>
+                <Button text="Aligner Droite" onAction="#alignRight"/>
+
+                <Button text="• Liste" onAction="#insertBullet"/>
+                <Button text="1. Liste" onAction="#insertNumberedList"/>
+
+                <Button fx:id="undoButton" text="↺" onAction="#undoAction"/>
+                <Button fx:id="redoButton" text="↻" onAction="#redoAction"/>
+
+                <Button fx:id="emojiButton" text="😀" onAction="#showEmojiMenu"/>
+            </ToolBar>
+
+            <!-- Zone de texte riche -->
+            <StyleClassedTextArea fx:id="descriptionArea" 
+                style="-fx-font-family: 'Arial'; -fx-font-size: 14px;"
+                wrapText="true"
+                prefHeight="300"/>
+
+        </VBox>
+
+        <!-- Difficulté avec étoiles -->
+        <Label text="Difficulté :" style="-fx-text-fill: #7f8c8d;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <HBox fx:id="difficulteStars" spacing="5" alignment="CENTER_LEFT" GridPane.rowIndex="2" GridPane.columnIndex="1">
+            <Button fx:id="star1" text="★" onAction="#handleStarClick" styleClass="star-button"/>
+            <Button fx:id="star2" text="★" onAction="#handleStarClick" styleClass="star-button"/>
+            <Button fx:id="star3" text="★" onAction="#handleStarClick" styleClass="star-button"/>
+            <Button fx:id="star4" text="★" onAction="#handleStarClick" styleClass="star-button"/>
+        </HBox>
+
+        <!-- Upload PDF -->
+        <Label text="Fichier PDF :" style="-fx-text-fill: #7f8c8d;" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <HBox spacing="8" GridPane.rowIndex="3" GridPane.columnIndex="1">
+            <TextField fx:id="pdfField" promptText="Sélectionner un PDF" editable="false" HBox.hgrow="ALWAYS"/>
+            <Button text="Parcourir" fx:id="browsePdfButton" onAction="#handleBrowsePdf"/>
+        </HBox>
+
+        <!-- Upload Image -->
+        <Label text="Image :" style="-fx-text-fill: #7f8c8d;" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+        <HBox spacing="8" GridPane.rowIndex="4" GridPane.columnIndex="1">
+            <TextField fx:id="imageField" promptText="Sélectionner une image" editable="false" HBox.hgrow="ALWAYS"/>
+            <Button text="Parcourir" fx:id="browseImageButton" onAction="#handleBrowseImage"/>
+        </HBox>
+
+        <!-- Date limite -->
+        <Label text="Date Limite :" style="-fx-text-fill: #7f8c8d;" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+        <DatePicker fx:id="deadlinePicker" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+    </GridPane>
+
+    <!-- Actions -->
+    <HBox spacing="20" alignment="CENTER_RIGHT">
+        <Button text="Annuler" onAction="#cancel"
+                style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-min-width: 120px;"/>
+        <Button text="Créer" onAction="#handleSave"
+                style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 150px;"/>
+    </HBox>
+
+</VBox>

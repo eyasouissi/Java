@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox xmlns="http://javafx.com/javafx/11.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="esprit.controllers.project.EditProjectController"
+      spacing="20"
+      alignment="TOP_CENTER"
+      style="-fx-background-color: #f5f7fa; -fx-padding: 25;"
+      prefWidth="600">
+
+    <!-- En-tête -->
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label text="Modifier le Projet"
+               style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+    </HBox>
+
+    <Separator style="-fx-padding: 0 0 10 0;"/>
+
+    <!-- Formulaire -->
+    <GridPane hgap="15" vgap="15"
+              style="-fx-background-color: white; -fx-background-radius: 5; -fx-padding: 20;
+                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);">
+        <columnConstraints>
+            <ColumnConstraints halignment="RIGHT" minWidth="120"/>
+            <ColumnConstraints hgrow="ALWAYS"/>
+        </columnConstraints>
+
+        <!-- ID (non modifiable) -->
+        <Label text="ID:" style="-fx-text-fill: #7f8c8d;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <Label fx:id="idLabel" style="-fx-text-fill: #34495e;" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+        <!-- Titre -->
+        <Label text="Titre:" style="-fx-text-fill: #7f8c8d;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <TextField fx:id="titleField" promptText="Titre du projet" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+        <!-- Description -->
+<Label text="Description:" style="-fx-text-fill: #7f8c8d;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+<TextArea fx:id="descriptionArea" promptText="Décris brièvement le projet"
+          wrapText="true" GridPane.rowIndex="2" GridPane.columnIndex="1"
+          GridPane.valignment="TOP"/>
+
+        <!-- Difficulté -->
+        <Label text="Difficulté (1-5):" style="-fx-text-fill: #7f8c8d;" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <Spinner fx:id="difficulteSpinner" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+        <!-- Fichier -->
+        <Label text="Fichier associé:" style="-fx-text-fill: #7f8c8d;" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+        <HBox spacing="5" GridPane.rowIndex="4" GridPane.columnIndex="1">
+            <TextField fx:id="fileField" promptText="Sélectionner un fichier..." editable="false" HBox.hgrow="ALWAYS"/>
+            <Button text="Browse" fx:id="browseFileButton"/>
+        </HBox>
+
+        <!-- Date de création (non modifiable) -->
+        <Label text="Date création:" style="-fx-text-fill: #7f8c8d;" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+        <TextField fx:id="creationDateField" editable="false" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+        <!-- Date limite -->
+        <Label text="Date limite:" style="-fx-text-fill: #7f8c8d;" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+        <DatePicker fx:id="deadlinePicker" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+    </GridPane>
+
+    <!-- Boutons d'action -->
+    <HBox spacing="15" alignment="CENTER_RIGHT">
+        <Button text="Annuler" onAction="#cancel"
+                style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-min-width: 100;"/>
+        <Button text="Mettre à jour" onAction="#updateProject"
+                style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-min-width: 120; -fx-font-weight: bold;"/>
+    </HBox>
+</VBox>
