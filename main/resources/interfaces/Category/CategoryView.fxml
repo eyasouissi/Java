@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<HBox xmlns="http://javafx.com/javafx/11.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="tn.esprit.controllers.Category.CategoryController"
+      stylesheets="@../../styles/category-styles.css"
+      spacing="0">
+
+    <!-- Sidebar -->
+    <fx:include fx:id="sidebar" source="/interfaces/Admin/Sidebar.fxml"/>
+
+    <!-- Contenu principal -->
+    <VBox styleClass="main-content" HBox.hgrow="ALWAYS">
+        <!-- En-tête -->
+        <HBox styleClass="header-box">
+            <Button text="← Retour aux Cours" onAction="#navigateToCoursesView" styleClass="back-button"/>
+            <Label text="Gestion des Catégories" styleClass="title-label"/>
+        </HBox>
+
+        <!-- Barre d'outils -->
+        <HBox styleClass="toolbar">
+            <Button text="Ajouter" onAction="#handleAddButton" styleClass="add-button"/>
+            <Button text="Rafraîchir" onAction="#loadCategories" styleClass="refresh-button"/>
+            <TextField fx:id="searchField" promptText="Rechercher..." styleClass="search-field"/>
+        </HBox>
+
+        <!-- Liste des catégories améliorée -->
+        <ListView fx:id="categoryListView" styleClass="modern-list" VBox.vgrow="ALWAYS">
+            <placeholder>
+                <VBox styleClass="empty-state" alignment="CENTER" spacing="15">
+                    <ImageView styleClass="empty-icon">
+                        <image>
+                            <Image url="@/interfaces/Category/images/default-icon.png" />
+                        </image>
+                    </ImageView>
+                    <Label text="Aucune catégorie disponible" styleClass="empty-text"/>
+                    <Label text="Cliquez sur 'Ajouter' pour créer une nouvelle catégorie" styleClass="empty-subtext"/>
+                </VBox>
+            </placeholder>
+        </ListView>
+    </VBox>
+</HBox>

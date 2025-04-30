@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="tn.esprit.controllers.offre"
+            prefHeight="600.0" prefWidth="700.0"
+            style="-fx-background-color: #f3e8ff;">
+    <children>
+        <VBox spacing="20" alignment="TOP_CENTER" AnchorPane.topAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+            <Label text="✨ Ajouter une Offre" style="-fx-font-size: 24px; -fx-text-fill: #6a0dad; -fx-font-weight: bold;" />
+
+            <GridPane hgap="10" vgap="15">
+                <columnConstraints>
+                    <ColumnConstraints halignment="RIGHT" minWidth="150"/>
+                    <ColumnConstraints halignment="LEFT" minWidth="350"/>
+                </columnConstraints>
+
+                <!-- Nom -->
+                <Label text="📛 Nom de l'offre:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <TextField fx:id="nom_offre" GridPane.rowIndex="0" GridPane.columnIndex="1"
+                           styleClass="custom-field"/>
+
+                <!-- Image + bouton -->
+                <Label text="🖼️ Image:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <HBox spacing="5" alignment="CENTER_LEFT" GridPane.rowIndex="1" GridPane.columnIndex="1">
+                    <TextField fx:id="image_offre" HBox.hgrow="ALWAYS" styleClass="custom-field"/>
+                    <Button fx:id="btnChoisirImage" text="📂" maxHeight="28" styleClass="small-icon-btn"/>
+                </HBox>
+
+                <!-- Prix -->
+                <Label text="💰 Prix:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <TextField fx:id="prix" GridPane.rowIndex="2" GridPane.columnIndex="1"
+                           styleClass="custom-field"/>
+
+                <!-- Dates -->
+                <Label text="📅 Date de début:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                <TextField fx:id="date_debut" GridPane.rowIndex="3" GridPane.columnIndex="1"
+                           styleClass="custom-field"/>
+
+                <Label text="📅 Date de fin:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                <TextField fx:id="date_fin" GridPane.rowIndex="4" GridPane.columnIndex="1"
+                           styleClass="custom-field"/>
+
+                <!-- Description -->
+                <Label text="📝 Description:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                <TextField fx:id="description" GridPane.rowIndex="5" GridPane.columnIndex="1"
+                           styleClass="custom-field"/>
+            </GridPane>
+
+            <!-- Boutons -->
+            <HBox spacing="20" alignment="CENTER">
+                <Button fx:id="btnAjouter" text="✅ Ajouter l'offre" styleClass="modern-btn"/>
+                <Button text="📋 Voir les Offres" onAction="#allerVersAffichage" styleClass="modern-btn-secondary"/>
+            </HBox>
+        </VBox>
+    </children>
+</AnchorPane>

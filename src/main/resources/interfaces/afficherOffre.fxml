@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="tn.esprit.controllers.AfficherOffre"
+            prefHeight="600.0" prefWidth="1000.0"
+            style="-fx-background-color: #F5F0FF; -fx-padding: 20;">
+
+    <children>
+
+        <!-- Titre principal -->
+        <Label text="📋 Liste des Offres"
+               layoutX="20.0" layoutY="10.0"
+               style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #4A235A;" />
+
+        <!-- Tableau des offres stylisé -->
+        <TableView fx:id="tableOffres"
+                   layoutX="20.0" layoutY="50.0"
+                   prefHeight="460.0" prefWidth="960.0"
+                   styleClass="modern-table">
+            <columns>
+                <TableColumn fx:id="colNom" text="📛 Nom de l'offre" prefWidth="150"/>
+                <TableColumn fx:id="colImage" text="🖼️ Image" prefWidth="150"/>
+                <TableColumn fx:id="colPrix" text="💰 Prix" prefWidth="80"/>
+                <TableColumn fx:id="colDateDebut" text="📅 Début" prefWidth="120"/>
+                <TableColumn fx:id="colDateFin" text="📅 Fin" prefWidth="120"/>
+                <TableColumn fx:id="colDescription" text="📝 Description" prefWidth="200"/>
+                <TableColumn fx:id="colAction" text="⚙️ Action" prefWidth="180"/>
+            </columns>
+        </TableView>
+
+        <!-- Bouton pour ajouter une nouvelle offre -->
+        <Button text="➕ Ajouter une offre"
+                fx:id="btnAjouter"
+                onAction="#allerVersAjout"
+                layoutX="820.0" layoutY="530.0"
+                styleClass="ajouter-btn"/>
+        <Button text="💳 Voir les Paiements"
+                layoutX="660.0" layoutY="530.0"
+                onAction="#allerVersPaiement"
+                styleClass="modern-btn-secondary"/>
+
+
+    </children>
+</AnchorPane>

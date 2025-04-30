@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="tn.esprit.controllers.AjouterPaiement"
+      spacing="15" alignment="CENTER"
+      prefWidth="500" prefHeight="400"
+      style="-fx-padding: 20; -fx-background-color: #f3e8ff;">
+
+    <Label fx:id="offreLabel" style="-fx-font-size: 20px; -fx-text-fill: #4b0082;" />
+    <Label fx:id="prixLabel" style="-fx-font-size: 18px; -fx-text-fill: #6a5acd;" />
+
+    <ComboBox fx:id="userComboBox" promptText="Sélectionner un utilisateur"
+              prefWidth="300" />
+
+    <DatePicker fx:id="datePaiementPicker" promptText="Date du paiement"
+                prefWidth="300" />
+
+    <Button text="Confirmer Paiement" onAction="#ajouterPaiement"
+            style="-fx-background-color: #6a5acd; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 20;" />
+
+    <Label fx:id="statusLabel" style="-fx-text-fill: red;" />
+</VBox>
