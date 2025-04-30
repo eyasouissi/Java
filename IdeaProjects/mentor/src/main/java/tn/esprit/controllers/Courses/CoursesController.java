@@ -22,94 +22,81 @@ import java.util.stream.Collectors;
 
 public class CoursesController {
 
-    // Composants FXML
     @FXML private ListView<Courses> coursesListView;
     @FXML private HBox actionButtonsBox;
     @FXML private ComboBox<Category> categoryFilterCombo;
     @FXML private CheckBox premiumFilterCheck;
+    @FXML private CheckBox publishedFilterCheck;
 
-    // Services
-    private final CoursesService coursesService = new CoursesService();
-    private final CategoryService categoryService = new CategoryService();
-
-    // Données
+    private final CoursesService coursesService = CoursesService.getInstance();
+    private final CategoryService categoryService = CategoryService.getInstance();
     private ObservableList<Courses> allCourses = FXCollections.observableArrayList();
-
-    // Factory pour l'affichage personnalisé des cours
-    private final Callback<ListView<Courses>, ListCell<Courses>> courseCellFactory = new Callback<>() {
-        @Override
-        public ListCell<Courses> call(ListView<Courses> param) {
-            return new ListCell<>() {
-                @Override
-                protected void updateItem(Courses course, boolean empty) {
-                    super.updateItem(course, empty);
-                    if (empty || course == null) {
-                        setText(null);
-                        setGraphic(null);
-                    } else {
-                        VBox box = new VBox(5);
-                        Label title = new Label(course.getTitle());
-                        title.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
-
-                        HBox details = new HBox(10);
-                        details.getChildren().addAll(
-                                new Label("Catégorie: " + course.getCategory().getName()),
-                                new Label("Tuteur: " + course.getTutorName()),
-                                new Label("Points: " + course.getProgressPointsRequired()),
-                                new Label(course.getIsPremium() ? "⭐ Premium" : "🆓 Gratuit")
-                        );
-                        details.setStyle("-fx-text-fill: #555; -fx-font-size: 12px;");
-
-                        box.getChildren().addAll(title, details);
-                        setGraphic(box);
-                    }
-                }
-            };
-        }
-    };
 
     @FXML
     private void initialize() {
         setupListView();
         setupFilters();
         loadAllCourses();
+        actionButtonsBox.setVisible(false);
     }
 
     private void setupListView() {
-        coursesListView.setCellFactory(courseCellFactory);
+        coursesListView.setCellFactory(createCourseCellFactory());
         coursesListView.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldVal, newVal) -> actionButtonsBox.setVisible(newVal != null)
         );
     }
 
+    private Callback<ListView<Courses>, ListCell<Courses>> createCourseCellFactory() {
+        return param -> new ListCell<Courses>() {
+            @Override
+            protected void updateItem(Courses course, boolean empty) {
+                super.updateItem(course, empty);
+                if (empty || course == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    VBox box = new VBox(5);
+                    Label title = new Label(course.getTitle());
+                    title.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+
+                    HBox details = new HBox(10);
+                    details.getChildren().addAll(
+                            new Label("Category: " + (course.getCategory() != null ?
+                                    course.getCategory().getName() : "Not defined")),
+                            new Label("Tutor: " + course.getTutorName()),
+                            new Label("Points: " + course.getProgressPointsRequired()),
+                            new Label(course.getIsPremium() ? "⭐ Premium" : "🆓 Free"),
+                            new Label(course.getIsPublished() ? "✅ Published" : "❌ Not published")
+                    );
+                    details.setStyle("-fx-text-fill: #555; -fx-font-size: 12px;");
+
+                    box.getChildren().addAll(title, details);
+                    setGraphic(box);
+                }
+            }
+        };
+    }
+
     private void setupFilters() {
-        // Initialisation des catégories avec affichage du nom seulement
         categoryFilterCombo.setCellFactory(param -> new ListCell<Category>() {
             @Override
             protected void updateItem(Category category, boolean empty) {
                 super.updateItem(category, empty);
-                if (empty || category == null) {
-                    setText(null);
-                } else {
-                    setText(category.getName());
-                }
+                setText(empty || category == null ? null : category.getName());
             }
         });
 
-        // Aussi pour l'affichage dans la liste déroulante
         categoryFilterCombo.setButtonCell(new ListCell<Category>() {
             @Override
             protected void updateItem(Category category, boolean empty) {
                 super.updateItem(category, empty);
-                if (empty || category == null) {
-                    setText(null);
-                } else {
-                    setText(category.getName());
-                }
+                setText(empty || category == null ? "All categories" : category.getName());
             }
         });
 
         categoryFilterCombo.getItems().setAll(categoryService.getAll());
+
         categoryFilterCombo.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldVal, newVal) -> filterCourses()
         );
@@ -117,26 +104,33 @@ public class CoursesController {
         premiumFilterCheck.selectedProperty().addListener(
                 (obs, oldVal, newVal) -> filterCourses()
         );
+
+        publishedFilterCheck.selectedProperty().addListener(
+                (obs, oldVal, newVal) -> filterCourses()
+        );
     }
 
     private void loadAllCourses() {
-        allCourses.setAll(coursesService.getAll());
-        coursesListView.setItems(allCourses);
+        try {
+            allCourses.setAll(coursesService.getAll());
+            coursesListView.setItems(allCourses);
+        } catch (Exception e) {
+            showAlert("Error", "Error while loading courses: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
     private void filterCourses() {
         List<Courses> filtered = allCourses.stream()
-                .filter(course ->
-                        categoryFilterCombo.getValue() == null ||
-                                course.getCategory().equals(categoryFilterCombo.getValue()))
-                .filter(course ->
-                        !premiumFilterCheck.isSelected() ||
-                                course.getIsPremium())
+                .filter(course -> categoryFilterCombo.getValue() == null ||
+                        (course.getCategory() != null &&
+                                course.getCategory().equals(categoryFilterCombo.getValue())))
+                .filter(course -> !premiumFilterCheck.isSelected() || course.getIsPremium())
+                .filter(course -> !publishedFilterCheck.isSelected() || course.getIsPublished())
                 .collect(Collectors.toList());
 
         coursesListView.setItems(FXCollections.observableArrayList(filtered));
     }
-    // Méthodes des boutons
+
     @FXML
     private void showAddCourseView() {
         try {
@@ -144,28 +138,15 @@ public class CoursesController {
             Parent root = loader.load();
             AddCourseController controller = loader.getController();
             controller.setParentController(this);
+            controller.setCategories(categoryService.getAll());
 
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
-            stage.setTitle("Ajouter un nouveau cours");
+            stage.setTitle("Add a new course");
             stage.show();
         } catch (IOException e) {
-            showAlert("Erreur", "Impossible d'ouvrir la fenêtre d'ajout", Alert.AlertType.ERROR);
+            showAlert("Error", "Could not open the add window: " + e.getMessage(), Alert.AlertType.ERROR);
         }
-    }
-
-    @FXML
-    private void showListCourses() {
-        loadAllCourses();
-        showAlert("Information", "Liste des cours rafraîchie", Alert.AlertType.INFORMATION);
-    }
-
-    @FXML
-    private void showPublishedCourses() {
-        List<Courses> publishedCourses = allCourses.stream()
-                .filter(Courses::getIsPublished)
-                .collect(Collectors.toList());
-        coursesListView.setItems(FXCollections.observableArrayList(publishedCourses));
     }
 
     @FXML
@@ -178,14 +159,17 @@ public class CoursesController {
                 EditCourseController controller = loader.getController();
                 controller.setCourse(selected);
                 controller.setParentController(this);
+                controller.setCategories(categoryService.getAll());
 
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root));
-                stage.setTitle("Modifier le cours");
+                stage.setTitle("Edit course");
                 stage.show();
             } catch (IOException e) {
-                showAlert("Erreur", "Impossible d'ouvrir la fenêtre de modification", Alert.AlertType.ERROR);
+                showAlert("Error", "Could not open the edit window: " + e.getMessage(), Alert.AlertType.ERROR);
             }
+        } else {
+            showAlert("No selection", "Please select a course to edit", Alert.AlertType.WARNING);
         }
     }
 
@@ -194,62 +178,36 @@ public class CoursesController {
         Courses selected = coursesListView.getSelectionModel().getSelectedItem();
         if (selected != null) {
             Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
-            confirmation.setTitle("Confirmation");
-            confirmation.setHeaderText("Supprimer ce cours ?");
-            confirmation.setContentText("Êtes-vous sûr de vouloir supprimer '" + selected.getTitle() + "' ?");
+            confirmation.setTitle("Delete confirmation");
+            confirmation.setHeaderText("Delete course '" + selected.getTitle() + "'?");
+            confirmation.setContentText("This action cannot be undone.");
 
-            if (confirmation.showAndWait().get() == ButtonType.OK) {
-                coursesService.supprimer(selected.getId());
-                loadAllCourses();
-                showAlert("Succès", "Cours supprimé avec succès", Alert.AlertType.INFORMATION);
-            }
+            confirmation.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    try {
+                        coursesService.supprimer(selected.getId());
+                        allCourses.remove(selected);
+                        showAlert("Success", "Course deleted successfully", Alert.AlertType.INFORMATION);
+                    } catch (Exception e) {
+                        showAlert("Error", "Failed to delete: " + e.getMessage(), Alert.AlertType.ERROR);
+                    }
+                }
+            });
+        } else {
+            showAlert("No selection", "Please select a course to delete", Alert.AlertType.WARNING);
         }
     }
 
-    @FXML
-    private void showCourseDetails() {
-        Courses selected = coursesListView.getSelectionModel().getSelectedItem();
-        if (selected != null) {
-            Alert info = new Alert(Alert.AlertType.INFORMATION);
-            info.setTitle("Détails du cours");
-            info.setHeaderText(selected.getTitle());
-            info.setContentText(
-                    "Description: " + selected.getDescription() + "\n\n" +
-                            "Catégorie: " + selected.getCategory().getName() + "\n" +
-                            "Tuteur: " + selected.getTutorName() + "\n" +
-                            "Points requis: " + selected.getProgressPointsRequired() + "\n" +
-                            "Statut: " + (selected.getIsPublished() ? "Publié" : "Non publié") + "\n" +
-                            "Type: " + (selected.getIsPremium() ? "Premium" : "Gratuit")
-            );
-            info.showAndWait();
-        }
-    }
-
-    // Méthode pour rafraîchir la liste depuis d'autres contrôleurs
     public void refreshCoursesList() {
         loadAllCourses();
+        resetFilters();
     }
 
-
-    @FXML
-    private void navigateToCoursesView() {
-        try {
-            // Charger la vue des cours
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/interfaces/Category/CategoryView.fxml"));
-            Parent root = loader.load();
-
-            // Obtenir la scène actuelle
-            Scene currentScene = coursesListView.getScene();
-
-            // Remplacer le contenu de la scène
-            currentScene.setRoot(root);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            showAlert("Erreur", "Impossible de charger la page des cours", Alert.AlertType.ERROR);
-        }
+    private void resetFilters() {
+        categoryFilterCombo.getSelectionModel().clearSelection();
+        premiumFilterCheck.setSelected(false);
+        publishedFilterCheck.setSelected(false);
     }
-
 
     private void showAlert(String title, String message, Alert.AlertType type) {
         Alert alert = new Alert(type);

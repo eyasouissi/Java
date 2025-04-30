@@ -1,140 +1,99 @@
 package tn.esprit.entities;
 
-import javafx.beans.property.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OneToMany;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Category {
-    private final IntegerProperty id = new SimpleIntegerProperty();
-    private final StringProperty name = new SimpleStringProperty();
-    private final StringProperty description = new SimpleStringProperty();
-    private final ObjectProperty<LocalDateTime> createdAt = new SimpleObjectProperty<>();
-    private final BooleanProperty isActive = new SimpleBooleanProperty();
-    private final StringProperty icon = new SimpleStringProperty();
+    private int id;
+    private String name;
+    private String description;
+    private LocalDateTime createdAt;
+    private boolean isActive = true;
+    private String icon;
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Courses> courses = new ArrayList<>();
 
-    // Constructeur principal
-    public Category(String name, String description, LocalDateTime createdAt, boolean isActive, String icon) {
-        this.name.set(name);
-        this.description.set(description);
-        this.createdAt.set(createdAt);
-        this.isActive.set(isActive);
-        this.icon.set(icon);
-    }
-
-    // Constructeur complet avec id
-    public Category(int id, String name, String description, LocalDateTime createdAt, boolean isActive, String icon) {
-        this.id.set(id);
-        this.name.set(name);
-        this.description.set(description);
-        this.createdAt.set(createdAt);
-        this.isActive.set(isActive);
-        this.icon.set(icon);
-    }
 
     public Category() {
-
+        this.createdAt = LocalDateTime.now();
     }
 
-    // Getters
-    public int getId() {
-        return id.get();
+    public Category(String name) {
+        this();
+        this.name = name;
     }
 
-    public String getName() {
-        return name.get();
+    public Category(String name, String description, LocalDateTime createdAt, boolean isActive, String icon) {
+        this.name = name;
+        this.description = description;
+        this.createdAt = createdAt != null ? createdAt : LocalDateTime.now();
+        this.isActive = isActive;
+        this.icon = icon;
     }
 
-    public String getDescription() {
-        return description.get();
+
+    // Getters and Setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    // Changed return type to primitive boolean
+    public boolean getIsActive() { return isActive; }
+
+    public void setIsActive(boolean active) { isActive = active; }
+    public String getIcon() { return icon; }
+    public void setIcon(String icon) { this.icon = icon; }
+    public List<Courses> getCourses() { return courses; }
+    public void setCourses(List<Courses> courses) { this.courses = courses; }
+
+    public void addCourse(Courses course) {
+        if (!courses.contains(course)) {
+            courses.add(course);
+            course.setCategory(this);
+        }
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt.get();
+    public void removeCourse(Courses course) {
+        if (courses.remove(course)) {
+            course.setCategory(null);
+        }
     }
 
-    public boolean getIsActive() {
-        return isActive.get();
+    public int getCourseCount() {
+        return courses.size();
     }
 
-    public String getIcon() {
-        return icon.get();
+    @Override
+    public String toString() {
+        return "Category{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", isActive=" + isActive +
+                ", courseCount=" + getCourseCount() +
+                '}';
     }
 
-    // Setters
-    public void setId(int id) {
-        this.id.set(id);
-    }
-
-    public void setName(String name) {
-        this.name.set(name);
-    }
-
-    public void setDescription(String description) {
-        this.description.set(description);
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt.set(createdAt);
-    }
-
-    public void setIsActive(boolean isActive) {
-        this.isActive.set(isActive);
-    }
-
-    public void setIcon(String icon) {
-        this.icon.set(icon);
-    }
-
-    // Property getters pour JavaFX Binding
-    public IntegerProperty idProperty() {
-        return id;
-    }
-
-    public StringProperty nameProperty() {
-        return name;
-    }
-
-    public StringProperty descriptionProperty() {
-        return description;
-    }
-
-    public ObjectProperty<LocalDateTime> createdAtProperty() {
-        return createdAt;
-    }
-
-    public BooleanProperty isActiveProperty() {
-        return isActive;
-    }
-
-    public StringProperty iconProperty() {
-        return icon;
-    }
-
-    // equals() et hashCode() basés sur id
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Category)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Category category = (Category) o;
-        return Objects.equals(id.get(), category.id.get());
+        return Objects.equals(id, category.id) &&
+                Objects.equals(name, category.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id.get());
-    }
-
-    // toString()
-    @Override
-    public String toString() {
-        return "Category{" +
-                "id=" + id.get() +
-                ", name='" + name.get() + '\'' +
-                ", description='" + description.get() + '\'' +
-                ", createdAt=" + createdAt.get() +
-                ", isActive=" + isActive.get() +
-                ", icon='" + icon.get() + '\'' +
-                '}';
+        return Objects.hash(id, name);
     }
 }

@@ -4,10 +4,28 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="tn.esprit.controllers.auth.MainController">
-    <VBox alignment="CENTER" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <Text text="Welcome to Main Page!" style="-fx-font-size: 24; -fx-font-weight: bold;"/>
-        <Label fx:id="welcomeLabel" style="-fx-font-size: 18;"/>
-    </VBox>
-</AnchorPane>
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="tn.esprit.controllers.auth.MainController"
+            style="-fx-background-color: #f5f5f5;">
+
+    <!-- Left Sidebar -->
+    <left>
+        <fx:include fx:id="sidebar" source="/interfaces/Front/Sidebar.fxml"/>
+    </left>
+
+
+
+    <!-- Main Content -->
+    <center>
+        <StackPane>
+            <VBox alignment="CENTER" spacing="20">
+                <Text text="Welcome to Main Page!"
+                      style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-fill: #333;" />
+                <Label fx:id="welcomeLabel"
+                       style="-fx-font-size: 18px; -fx-text-fill: #666;" />
+            </VBox>
+        </StackPane>
+    </center>
+
+</BorderPane>

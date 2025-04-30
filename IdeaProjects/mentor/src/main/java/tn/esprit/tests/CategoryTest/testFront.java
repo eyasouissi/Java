@@ -19,7 +19,7 @@ public class testFront extends Application {
     public void start(Stage primaryStage) {
         try {
             // Chemin vers le fichier FXML de l'interface carrousel
-            URL fxmlURL = getClass().getResource("/interfaces/Category/Front/CategoriesView.fxml");
+            URL fxmlURL = getClass().getResource("/interfaces/Courses/MainViewFront.fxml");
 
             // Debug: Affiche le chemin absolu
             System.out.println("Chemin du fichier FXML: " +
@@ -39,10 +39,7 @@ public class testFront extends Application {
             primaryStage.setTitle("Test Interface Catégories - Carrousel");
             Scene scene = new Scene(root, 1000, 700);
 
-            // Appliquer le CSS
-            scene.getStylesheets().add(
-                    getClass().getResource("/css/categories.css").toExternalForm()
-            );
+
 
             primaryStage.setScene(scene);
             primaryStage.show();

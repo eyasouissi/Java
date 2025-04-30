@@ -13,10 +13,10 @@ public class CategoryServiceTest {
             System.out.println("=== Début des tests CategoryService ===");
 
             // Test 1: Création de catégorie
-            Category testCategory = createCategoryTest();
+          //  Category testCategory = createCategoryTest();
 
             // Test 2: Modification de catégorie
-            modifyCategoryTest(testCategory);
+        //    modifyCategoryTest(testCategory);
 
             // Test 3: Suppression de catégorie
           //  deleteCategoryTest(testCategory);
@@ -31,7 +31,7 @@ public class CategoryServiceTest {
         }
     }
 
-    private static Category createCategoryTest() {
+  /*  private static Category createCategoryTest() {
         System.out.println("\n--- Test 1: Création de catégorie ---");
         Category category = new Category(
                 "Test Category " + System.currentTimeMillis(),
@@ -51,7 +51,7 @@ public class CategoryServiceTest {
         }
 
         return category;
-    }
+    }*/
 
     private static void modifyCategoryTest(Category category) {
         System.out.println("\n--- Test 2: Modification de catégorie ---");

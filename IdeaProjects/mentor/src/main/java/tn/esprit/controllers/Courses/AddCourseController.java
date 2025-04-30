@@ -6,8 +6,9 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import tn.esprit.entities.Category;
 import tn.esprit.entities.Courses;
-import tn.esprit.services.CategoryService;
 import tn.esprit.services.CoursesService;
+
+import java.util.List;
 
 public class AddCourseController {
     // Form fields
@@ -16,6 +17,7 @@ public class AddCourseController {
     @FXML private ComboBox<Category> categoryComboBox;
     @FXML private TextField pointsField;
     @FXML private CheckBox premiumCheckBox;
+    @FXML private CheckBox publishedCheckBox;
     @FXML private TextField tutorField;
 
     // Error labels
@@ -25,17 +27,17 @@ public class AddCourseController {
     @FXML private Label pointsError;
     @FXML private Label tutorError;
 
-    private CoursesController coursesController;
-    private final CategoryService categoryService = new CategoryService();
-    private final CoursesService coursesService = new CoursesService();
+    private CoursesController parentController;
+    private final CoursesService coursesService = CoursesService.getInstance();
 
     @FXML
     private void initialize() {
-        setupCategoryComboBox();
+        configureCategoryComboBox();
         setupFieldValidations();
+        setupFormListeners();
     }
 
-    private void setupCategoryComboBox() {
+    private void configureCategoryComboBox() {
         categoryComboBox.setConverter(new StringConverter<Category>() {
             @Override
             public String toString(Category category) {
@@ -50,104 +52,119 @@ public class AddCourseController {
                         .orElse(null);
             }
         });
-
-        try {
-            categoryComboBox.getItems().setAll(categoryService.getAll());
-        } catch (Exception e) {
-            showAlert("Erreur", "Impossible de charger les catégories", Alert.AlertType.ERROR);
-        }
     }
 
     private void setupFieldValidations() {
-        // Numeric validation for points field
-        pointsField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*")) {
-                pointsField.setText(newValue.replaceAll("[^\\d]", ""));
+        // Only allow numbers in points field
+        pointsField.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal.matches("\\d*")) {
+                pointsField.setText(newVal.replaceAll("[^\\d]", ""));
             }
+            validatePointsField();
         });
     }
 
-    @FXML
-    private void saveCourse() {
-        if (!validateForm()) {
-            return;
-        }
+    private void setupFormListeners() {
+        titleField.textProperty().addListener((obs, oldVal, newVal) -> validateTitleField());
+        descriptionField.textProperty().addListener((obs, oldVal, newVal) -> validateDescriptionField());
+        categoryComboBox.valueProperty().addListener((obs, oldVal, newVal) -> validateCategoryField());
+        tutorField.textProperty().addListener((obs, oldVal, newVal) -> validateTutorField());
+    }
 
-        try {
-            Courses course = createCourseFromForm();
-            coursesService.ajouter(course);
-            coursesController.refreshCoursesList();
-            closeWindow();
-        } catch (Exception e) {
-            showAlert("Erreur", "Échec de l'enregistrement du cours", Alert.AlertType.ERROR);
+    public void setCategories(List<Category> categories) {
+        categoryComboBox.getItems().setAll(categories);
+    }
+
+    @FXML
+    private void handleSave() {
+        if (validateForm()) {
+            try {
+                Courses newCourse = createCourseFromInput();
+                coursesService.ajouter(newCourse);
+                notifyParentController();
+                closeWindow();
+            } catch (Exception e) {
+                showError("Critical Error", "Failed to create course: " + e.getMessage());
+            }
         }
     }
 
-    private Courses createCourseFromForm() {
+    private Courses createCourseFromInput() {
         Courses course = new Courses();
         course.setTitle(titleField.getText().trim());
         course.setDescription(descriptionField.getText().trim());
         course.setCategory(categoryComboBox.getValue());
         course.setProgressPointsRequired(Integer.parseInt(pointsField.getText()));
         course.setIsPremium(premiumCheckBox.isSelected());
+        course.setIsPublished(publishedCheckBox.isSelected());
         course.setTutorName(tutorField.getText().trim());
         return course;
     }
 
     private boolean validateForm() {
-        clearFieldStyles();
-        boolean isValid = true;
+        boolean titleValid = validateTitleField();
+        boolean descValid = validateDescriptionField();
+        boolean categoryValid = validateCategoryField();
+        boolean pointsValid = validatePointsField();
+        boolean tutorValid = validateTutorField();
 
-        // Title validation
-        if (titleField.getText() == null || titleField.getText().trim().isEmpty()) {
-            setError(titleField, titleError, "Le titre est requis");
-            isValid = false;
-        }
+        return titleValid && descValid && categoryValid && pointsValid && tutorValid;
+    }
 
-        // Description validation
-        if (descriptionField.getText() == null || descriptionField.getText().trim().isEmpty()) {
-            setError(descriptionField, descriptionError, "La description est requise");
-            isValid = false;
-        }
-
-        // Category validation
-        if (categoryComboBox.getValue() == null) {
-            setError(categoryComboBox, categoryError, "Veuillez sélectionner une catégorie");
-            isValid = false;
-        }
-
-        // Points validation
-        if (pointsField.getText().isEmpty()) {
-            setError(pointsField, pointsError, "Les points sont requis");
-            isValid = false;
-        } else {
-            try {
-                int points = Integer.parseInt(pointsField.getText());
-                if (points < 0) {
-                    setError(pointsField, pointsError, "Les points doivent être positifs");
-                    isValid = false;
-                }
-            } catch (NumberFormatException e) {
-                setError(pointsField, pointsError, "Valeur numérique invalide");
-                isValid = false;
-            }
-        }
-
-        // Tutor validation
-        if (tutorField.getText() == null || tutorField.getText().trim().isEmpty()) {
-            setError(tutorField, tutorError, "Le nom du tuteur est requis");
-            isValid = false;
-        }
-
-        if (!isValid) {
-            showAlert("Formulaire invalide", "Veuillez corriger les erreurs indiquées", Alert.AlertType.WARNING);
-        }
-
+    private boolean validateTitleField() {
+        boolean isValid = !titleField.getText().trim().isEmpty();
+        setFieldState(titleField, titleError, isValid, "Title is required");
         return isValid;
     }
 
+    private boolean validateDescriptionField() {
+        boolean isValid = !descriptionField.getText().trim().isEmpty();
+        setFieldState(descriptionField, descriptionError, isValid, "Description is required");
+        return isValid;
+    }
+
+    private boolean validateCategoryField() {
+        boolean isValid = categoryComboBox.getValue() != null;
+        setFieldState(categoryComboBox, categoryError, isValid, "Please select a category");
+        return isValid;
+    }
+
+    private boolean validatePointsField() {
+        if (pointsField.getText().isEmpty()) {
+            setFieldState(pointsField, pointsError, false, "Points are required");
+            return false;
+        }
+
+        try {
+            int points = Integer.parseInt(pointsField.getText());
+            boolean isValid = points >= 0 && points <= 1000;
+            setFieldState(pointsField, pointsError, isValid, "Must be between 0-1000");
+            return isValid;
+        } catch (NumberFormatException e) {
+            setFieldState(pointsField, pointsError, false, "Invalid number");
+            return false;
+        }
+    }
+
+    private boolean validateTutorField() {
+        boolean isValid = !tutorField.getText().trim().isEmpty();
+        setFieldState(tutorField, tutorError, isValid, "Tutor name is required");
+        return isValid;
+    }
+
+    private void setFieldState(Control field, Label errorLabel, boolean isValid, String errorMessage) {
+        if (isValid) {
+            field.getStyleClass().remove("error-field");
+            errorLabel.setVisible(false);
+        } else {
+            field.getStyleClass().add("error-field");
+            errorLabel.setText(errorMessage);
+            errorLabel.setVisible(true);
+        }
+    }
+
     @FXML
-    private void cancel() {
+    private void handleCancel() {
         closeWindow();
     }
 
@@ -156,33 +173,21 @@ public class AddCourseController {
         stage.close();
     }
 
-    private void showAlert(String title, String message, Alert.AlertType type) {
-        Alert alert = new Alert(type);
+    private void notifyParentController() {
+        if (parentController != null) {
+            parentController.refreshCoursesList();
+        }
+    }
+
+    private void showError(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
     }
 
-    private void setError(Control field, Label errorLabel, String errorMessage) {
-        field.setStyle("-fx-border-color: #e74c3c; -fx-border-width: 1.5; -fx-border-radius: 3;");
-        errorLabel.setText(errorMessage);
-        errorLabel.setVisible(true);
-    }
-
-    private void clearFieldStyles() {
-        Control[] fields = {titleField, descriptionField, categoryComboBox, pointsField, tutorField};
-        for (Control field : fields) {
-            field.setStyle("-fx-border-color: #bdc3c7; -fx-border-width: 1; -fx-border-radius: 3;");
-        }
-
-        Label[] errorLabels = {titleError, descriptionError, categoryError, pointsError, tutorError};
-        for (Label label : errorLabels) {
-            label.setVisible(false);
-        }
-    }
-
-    public void setParentController(CoursesController coursesController) {
-        this.coursesController = coursesController;
+    public void setParentController(CoursesController controller) {
+        this.parentController = controller;
     }
 }

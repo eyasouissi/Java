@@ -111,3 +111,202 @@
 .modern-list .scroll-bar .track {
     -fx-background-color: #f8f9fa;
 }
+
+/* Style pour le conteneur de recherche */
+.search-container {
+    -fx-background-color: #f1f3f4;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: #dfe1e5;
+    -fx-border-width: 1;
+    -fx-padding: 0 5 0 10;
+    -fx-spacing: 5;
+}
+
+/* Style du champ de recherche */
+.search-field {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-prompt-text-fill: #5f6368;
+    -fx-font-size: 14px;
+    -fx-text-fill: #202124;
+    -fx-pref-width: 250;
+}
+
+/* Icône de recherche */
+.search-icon {
+    -fx-icon-color: #5f6368;
+    -fx-icon-size: 16px;
+}
+
+/* Bouton effacer la recherche */
+.clear-search-button {
+    -fx-background-color: transparent;
+    -fx-padding: 5;
+    -fx-cursor: hand;
+}
+
+.clear-search-button:hover {
+    -fx-background-color: #f1f3f4;
+    -fx-background-radius: 50%;
+}
+
+/* Effets au focus */
+.search-container:focused {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 0, 0, 0, 2);
+    -fx-border-color: #4285f4;
+}
+
+/* Style pour les autres éléments */
+.toolbar {
+    -fx-padding: 15;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 0, 2, 0, 0);
+}
+
+
+/* sidebarFront.css */
+.root {
+    -fx-font-family: 'Arial';
+}
+
+.button {
+    -fx-cursor: hand;
+}
+
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-padding: 15;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);
+}
+
+.title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4B0082;
+}
+
+/* Pour le conteneur des catégories */
+#categoriesContainer {
+    -fx-padding: 5px;
+}
+
+/* Pour les cartes de catégorie */
+.category-card {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-padding: 15;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0);
+}
+
+.category-card:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 8, 0, 0, 0);
+}
+
+/* Pour les boutons de navigation */
+.arrow-button {
+    -fx-background-color: #4B0082;
+    -fx-text-fill: white;
+    -fx-background-radius: 50%;
+    -fx-min-width: 30;
+    -fx-min-height: 30;
+}
+
+.arrow-button:hover {
+    -fx-opacity: 0.8;
+}
+
+/* Style pour les cartes de catégorie */
+.category-card {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-padding: 15;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0);
+}
+
+.category-card:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 8, 0, 0, 0);
+}
+
+/* Boutons de navigation */
+.nav-button {
+    -fx-background-color: #4B0082;
+    -fx-text-fill: white;
+    -fx-background-radius: 50%;
+    -fx-min-width: 30;
+    -fx-min-height: 30;
+}
+
+.nav-button:hover {
+    -fx-opacity: 0.8;
+}
+
+/* Espaceur */
+.spacer {
+    -fx-min-height: 20;
+}
+
+/* Conteneur des catégories */
+.category-container {
+    -fx-background-color: #F5F0F5;
+    -fx-padding: 10px;
+}
+
+/* Cartes de catégorie */
+.category-card {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-padding: 15px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0);
+    -fx-min-width: 140px;
+    -fx-min-height: 140px;
+    -fx-alignment: center;
+}
+
+/* Images des catégories */
+.category-icon {
+    -fx-fit-width: 80px;
+    -fx-fit-height: 80px;
+}
+
+/* Boutons de navigation */
+.nav-button {
+    -fx-background-radius: 50%;
+    -fx-min-width: 30px;
+    -fx-min-height: 30px;
+    -fx-background-color: #4B0082;
+}
+
+.category-icon {
+    -fx-font-size: 24px;
+    -fx-text-fill: #4B0082;
+}
+
+.nav-button {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+/* For the categories container */
+#categoriesContainer {
+    -fx-padding: 10px;
+    -fx-alignment: center;
+}
+
+/* For the scroll pane */
+#categoriesScrollPane {
+    -fx-min-height: 150px;
+    -fx-pref-height: 150px;
+}
+
+/* For category cards */
+.category-card {
+    -fx-min-width: 120px;
+    -fx-min-height: 120px;
+    -fx-pref-width: 120px;
+    -fx-pref-height: 120px;
+}

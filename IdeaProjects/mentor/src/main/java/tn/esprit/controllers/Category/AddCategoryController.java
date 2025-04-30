@@ -10,42 +10,51 @@ import tn.esprit.entities.Category;
 import tn.esprit.services.CategoryService;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class AddCategoryController {
+    // Constants
+    private static final String UPLOAD_DIRECTORY = "C:/xampp/htdocs/uploads/";
+    private static final long MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+    private static final String[] ALLOWED_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif"};
 
+    // Form fields
     @FXML private TextField nameField;
     @FXML private TextArea descriptionField;
     @FXML private TextField iconField;
     @FXML private CheckBox isActiveCheckBox;
     @FXML private ImageView iconPreview;
+
+    // UI elements
     @FXML private Label noIconLabel;
     @FXML private Label nameErrorLabel;
     @FXML private Label descErrorLabel;
     @FXML private Label iconErrorLabel;
 
-    private CategoryController categoryController;
-    private final CategoryService categoryService = new CategoryService();
+    private CategoryController parentController;
+    private final CategoryService categoryService = CategoryService.getInstance();
     private final FileChooser fileChooser = new FileChooser();
-
-    public void setCategoryController(CategoryController categoryController) {
-        this.categoryController = categoryController;
-    }
 
     @FXML
     public void initialize() {
-        // Configuration du FileChooser
+        configureFileChooser();
+        setupValidationListeners();
+        resetErrorLabels();
+    }
+
+    private void configureFileChooser() {
+        fileChooser.setTitle("Select Image File");
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif"),
-                new FileChooser.ExtensionFilter("Tous les fichiers", "*.*")
+                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif"),
+                new FileChooser.ExtensionFilter("All Files", "*.*")
         );
+    }
 
-        // Initialisation des labels d'erreur
-        nameErrorLabel.setText("");
-        descErrorLabel.setText("");
-        iconErrorLabel.setText("");
-
-        // Contrôles de saisie en temps réel
+    private void setupValidationListeners() {
         nameField.textProperty().addListener((obs, oldVal, newVal) -> validateName());
         descriptionField.textProperty().addListener((obs, oldVal, newVal) -> validateDescription());
         iconField.textProperty().addListener((obs, oldVal, newVal) -> {
@@ -54,27 +63,32 @@ public class AddCategoryController {
         });
     }
 
+    private void resetErrorLabels() {
+        nameErrorLabel.setText("");
+        descErrorLabel.setText("");
+        iconErrorLabel.setText("");
+    }
+
+    // Validation methods
     private void validateName() {
         String name = nameField.getText().trim();
         if (name.isEmpty()) {
-            nameErrorLabel.setText("Le nom est obligatoire");
+            setError(nameField, nameErrorLabel, "Name is required");
         } else if (name.length() > 50) {
-            nameErrorLabel.setText("Max 50 caractères");
-        } else if (!name.matches("^[\\p{L}0-9 .'-]+$")) {
-            nameErrorLabel.setText("Caractères spéciaux non autorisés");
+            setError(nameField, nameErrorLabel, "Maximum 50 characters");
         } else {
-            nameErrorLabel.setText("");
+            clearError(nameField, nameErrorLabel);
         }
     }
 
     private void validateDescription() {
         String desc = descriptionField.getText().trim();
         if (desc.isEmpty()) {
-            descErrorLabel.setText("La description est obligatoire");
+            setError(descriptionField, descErrorLabel, "Description is required");
         } else if (desc.length() > 255) {
-            descErrorLabel.setText("Max 255 caractères");
+            setError(descriptionField, descErrorLabel, "Maximum 255 characters");
         } else {
-            descErrorLabel.setText("");
+            clearError(descriptionField, descErrorLabel);
         }
     }
 
@@ -82,38 +96,83 @@ public class AddCategoryController {
         String iconPath = iconField.getText().trim();
         if (!iconPath.isEmpty()) {
             try {
-                new Image(iconPath); // Teste si l'image est valide
-                iconErrorLabel.setText("");
+                new Image(iconPath); // Test if image is valid
+                clearError(iconField, iconErrorLabel);
             } catch (Exception e) {
-                iconErrorLabel.setText("Format d'image invalide");
+                setError(iconField, iconErrorLabel, "Invalid image format");
             }
         } else {
-            iconErrorLabel.setText("Une icône est recommandée");
+            iconErrorLabel.setText("Icon recommended");
+            iconField.getStyleClass().remove("error-field");
         }
+    }
+
+    private boolean isFormValid() {
+        validateName();
+        validateDescription();
+        validateIcon();
+
+        return nameErrorLabel.getText().isEmpty() &&
+                descErrorLabel.getText().isEmpty();
     }
 
     @FXML
     private void handleBrowse() {
-        File file = fileChooser.showOpenDialog(iconField.getScene().getWindow());
-        if (file != null) {
-            // Vérifie la taille du fichier (max 2MB)
-            if (file.length() > 2 * 1024 * 1024) {
-                showAlert("Fichier trop volumineux", "L'image ne doit pas dépasser 2MB", Alert.AlertType.WARNING);
-                return;
+        File selectedFile = fileChooser.showOpenDialog(iconField.getScene().getWindow());
+        if (selectedFile != null) {
+            try {
+                if (!isValidImageFile(selectedFile)) {
+                    showAlert("Invalid Format", "Only PNG/JPEG/JPG/GIF files are allowed", Alert.AlertType.ERROR);
+                    return;
+                }
+
+                if (selectedFile.length() > MAX_FILE_SIZE) {
+                    showAlert("File Too Large", "Image must not exceed 2MB", Alert.AlertType.WARNING);
+                    return;
+                }
+
+                File uploadDir = new File(UPLOAD_DIRECTORY);
+                if (!uploadDir.exists()) {
+                    uploadDir.mkdir();
+                }
+
+                String extension = getFileExtension(selectedFile.getName());
+                String uniqueFileName = "cat_" + UUID.randomUUID() + extension;
+                File destination = new File(UPLOAD_DIRECTORY + uniqueFileName);
+                Files.copy(selectedFile.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+                String webPath = "http://localhost/uploads/" + uniqueFileName;
+                iconField.setText(webPath);
+
+            } catch (IOException e) {
+                showAlert("Upload Error", "Failed to upload image: " + e.getMessage(), Alert.AlertType.ERROR);
             }
-            iconField.setText(file.toURI().toString());
         }
     }
 
-    private void updateIconPreview(String iconPath) {
-        if (iconPath == null || iconPath.isEmpty()) {
+    private boolean isValidImageFile(File file) {
+        String name = file.getName().toLowerCase();
+        for (String ext : ALLOWED_EXTENSIONS) {
+            if (name.endsWith(ext)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String getFileExtension(String filename) {
+        return filename.substring(filename.lastIndexOf("."));
+    }
+
+    private void updateIconPreview(String imageUrl) {
+        if (imageUrl == null || imageUrl.isEmpty()) {
             iconPreview.setImage(null);
             noIconLabel.setVisible(true);
             return;
         }
 
         try {
-            Image image = new Image(iconPath);
+            Image image = new Image(imageUrl);
             iconPreview.setImage(image);
             noIconLabel.setVisible(false);
         } catch (Exception e) {
@@ -124,35 +183,28 @@ public class AddCategoryController {
 
     @FXML
     private void handleAdd() {
-        // Valide tous les champs avant soumission
-        validateName();
-        validateDescription();
-        validateIcon();
-
         if (!isFormValid()) {
-            showAlert("Formulaire invalide", "Veuillez corriger les erreurs avant de soumettre", Alert.AlertType.WARNING);
             return;
         }
 
-        String name = nameField.getText().trim();
-        String description = descriptionField.getText().trim();
-        String icon = iconField.getText().trim();
-        boolean isActive = isActiveCheckBox.isSelected();
+        try {
+            Category category = new Category();
+            category.setName(nameField.getText().trim());
+            category.setDescription(descriptionField.getText().trim());
+            category.setCreatedAt(LocalDateTime.now());
+            category.setIsActive(isActiveCheckBox.isSelected());
+            category.setIcon(iconField.getText().trim());
 
-            Category category = new Category(name, description, LocalDateTime.now(), isActive, icon);
             categoryService.ajouter(category);
 
-            showAlert("Succès", "Catégorie ajoutée avec succès", Alert.AlertType.INFORMATION);
-            categoryController.loadCategories();
+
+
+            showAlert("Success", "Category added successfully", Alert.AlertType.INFORMATION);
             closeWindow();
 
-    }
-
-    private boolean isFormValid() {
-        return nameErrorLabel.getText().isEmpty() &&
-                descErrorLabel.getText().isEmpty() &&
-                !nameField.getText().trim().isEmpty() &&
-                !descriptionField.getText().trim().isEmpty();
+        } catch (Exception e) {
+            showAlert("Error", "Failed to add category: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
     @FXML
@@ -160,16 +212,33 @@ public class AddCategoryController {
         closeWindow();
     }
 
+    // Utility methods
     private void closeWindow() {
         Stage stage = (Stage) nameField.getScene().getWindow();
         stage.close();
     }
 
-    private void showAlert(String title, String content, Alert.AlertType type) {
+    private void setError(Control field, Label errorLabel, String message) {
+        field.getStyleClass().add("error-field");
+        errorLabel.setText(message);
+        errorLabel.setVisible(true);
+    }
+
+    private void clearError(Control field, Label errorLabel) {
+        field.getStyleClass().remove("error-field");
+        errorLabel.setText("");
+        errorLabel.setVisible(false);
+    }
+
+    private void showAlert(String title, String message, Alert.AlertType type) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);
-        alert.setContentText(content);
+        alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    public void setParentController(CategoryController controller) {
+        this.parentController = controller;
     }
 }

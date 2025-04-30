@@ -29,7 +29,8 @@ public class CategoryService implements IServices<Category> {
         try (PreparedStatement pst = cnx.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             pst.setString(1, category.getName());
             pst.setString(2, category.getDescription());
-            pst.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
+            pst.setTimestamp(3, Timestamp.valueOf(category.getCreatedAt() != null ?
+                    category.getCreatedAt() : LocalDateTime.now()));
             pst.setBoolean(4, category.getIsActive());
             pst.setString(5, category.getIcon());
 
@@ -72,8 +73,18 @@ public class CategoryService implements IServices<Category> {
 
     @Override
     public void supprimer(int id) {
-        String query = "DELETE FROM category WHERE id = ?";
-        try (PreparedStatement pst = cnx.prepareStatement(query)) {
+        // D'abord supprimer ou mettre à null les références dans les cours associés
+        String updateCoursesQuery = "UPDATE courses SET category_id = NULL WHERE category_id = ?";
+        try (PreparedStatement pst = cnx.prepareStatement(updateCoursesQuery)) {
+            pst.setInt(1, id);
+            pst.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to update associated courses: " + e.getMessage(), e);
+        }
+
+        // Ensuite supprimer la catégorie
+        String deleteQuery = "DELETE FROM category WHERE id = ?";
+        try (PreparedStatement pst = cnx.prepareStatement(deleteQuery)) {
             pst.setInt(1, id);
             int rowsDeleted = pst.executeUpdate();
             if (rowsDeleted == 0) {
@@ -86,9 +97,13 @@ public class CategoryService implements IServices<Category> {
 
     @Override
     public Category getOne(Category category) {
+        return getById(category.getId());
+    }
+
+    public Category getById(int id) {
         String query = "SELECT * FROM category WHERE id = ?";
         try (PreparedStatement pst = cnx.prepareStatement(query)) {
-            pst.setInt(1, category.getId());
+            pst.setInt(1, id);
             ResultSet rs = pst.executeQuery();
             if (rs.next()) {
                 return mapResultSetToCategory(rs);
@@ -114,20 +129,20 @@ public class CategoryService implements IServices<Category> {
         return categories;
     }
 
-    // Méthode utilitaire pour mapper un ResultSet vers un objet Category
     private Category mapResultSetToCategory(ResultSet rs) throws SQLException {
-        Category category = new Category(
-                rs.getInt("id"),
-                rs.getString("name"),
-                rs.getString("description"),
-                rs.getTimestamp("created_at").toLocalDateTime(),
-                rs.getBoolean("is_active"),
-                rs.getString("icon")
-        );
+        Category category = new Category();
+        category.setId(rs.getInt("id"));
+        category.setName(rs.getString("name"));
+        category.setDescription(rs.getString("description"));
+        category.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+        category.setIsActive(rs.getBoolean("is_active"));
+        category.setIcon(rs.getString("icon"));
+
+        // Note: La liste des cours n'est pas chargée ici pour éviter les requêtes N+1
+        // Vous pourriez ajouter une méthode séparée pour charger les cours si nécessaire
         return category;
     }
 
-    // Méthode supplémentaire pour récupérer une catégorie par son nom
     public Category getByName(String name) {
         String query = "SELECT * FROM category WHERE name = ?";
         try (PreparedStatement pst = cnx.prepareStatement(query)) {
@@ -140,5 +155,20 @@ public class CategoryService implements IServices<Category> {
             throw new RuntimeException("Failed to get category by name: " + e.getMessage(), e);
         }
         return null;
+    }
+
+    // Méthode pour compter le nombre de cours par catégorie
+    public int getCourseCount(int categoryId) {
+        String query = "SELECT COUNT(*) FROM courses WHERE category_id = ?";
+        try (PreparedStatement pst = cnx.prepareStatement(query)) {
+            pst.setInt(1, categoryId);
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to get course count: " + e.getMessage(), e);
+        }
+        return 0;
     }
 }

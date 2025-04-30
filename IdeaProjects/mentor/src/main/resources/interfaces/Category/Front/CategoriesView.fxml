@@ -33,12 +33,12 @@
 
                 <!-- Navigation Buttons -->
                 <HBox styleClass="nav-buttons">
-                    <Button styleClass="nav-button prev-button" onAction="#prevCategory">
+                    <Button fx:id="prevButton" styleClass="nav-button prev-button">
                         <graphic>
                             <FontIcon iconLiteral="fas-chevron-left"/>
                         </graphic>
                     </Button>
-                    <Button styleClass="nav-button next-button" onAction="#nextCategory">
+                    <Button fx:id="nextButton" styleClass="nav-button next-button">
                         <graphic>
                             <FontIcon iconLiteral="fas-chevron-right"/>
                         </graphic>

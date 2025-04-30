@@ -4,73 +4,89 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox xmlns="http://javafx.com/javafx/11.0.1"
+<VBox xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="tn.esprit.controllers.Courses.AddCourseController"
+      stylesheets="@/styles/courses-styles.css"
       spacing="20"
       alignment="TOP_CENTER"
-      style="-fx-background-color: #f5f7fa; -fx-padding: 25;"
-      prefWidth="500">
+      prefWidth="550">
 
-    <!-- Header with title -->
-    <Label text="Nouveau cours"
-           style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+    <!-- Header -->
+    <Label text="New Course" styleClass="form-title"/>
 
-    <Separator style="-fx-padding: 0 0 10 0;"/>
+    <Separator styleClass="form-separator"/>
 
-    <!-- Form in a shadowed panel -->
-    <GridPane hgap="15" vgap="15"
-              style="-fx-background-color: white; -fx-background-radius: 5; -fx-padding: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);">
+    <!-- Form Container -->
+    <GridPane styleClass="form-container">
         <columnConstraints>
             <ColumnConstraints halignment="RIGHT" hgrow="NEVER" minWidth="120"/>
-            <ColumnConstraints hgrow="ALWAYS" minWidth="250"/>
+            <ColumnConstraints hgrow="ALWAYS" minWidth="300"/>
         </columnConstraints>
 
         <!-- Title Field -->
-        <Label text="Titre*:" style="-fx-text-fill: #34495e;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-        <TextField fx:id="titleField" promptText="Entrez le titre" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-        <Label fx:id="titleError" style="-fx-text-fill: #e74c3c; -fx-font-size: 11px;"
+        <Label text="Title*:" styleClass="form-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="titleField" promptText="Course title" styleClass="form-field"
+                   GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+        <Label fx:id="titleError" styleClass="error-label"
                GridPane.rowIndex="0" GridPane.columnIndex="1" GridPane.valignment="BOTTOM"/>
 
         <!-- Description Field -->
-        <Label text="Description*:" style="-fx-text-fill: #34495e;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <TextArea fx:id="descriptionField" promptText="Description du cours" wrapText="true" prefRowCount="3"
+        <Label text="Description*:" styleClass="form-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <TextArea fx:id="descriptionField" promptText="Complete description" wrapText="true"
+                  styleClass="form-field" prefRowCount="3"
                   GridPane.rowIndex="1" GridPane.columnIndex="1" GridPane.valignment="TOP"/>
-        <Label fx:id="descriptionError" style="-fx-text-fill: #e74c3c; -fx-font-size: 11px;"
+        <Label fx:id="descriptionError" styleClass="error-label"
                GridPane.rowIndex="1" GridPane.columnIndex="1" GridPane.valignment="BOTTOM"/>
 
         <!-- Category Field -->
-        <Label text="Catégorie*:" style="-fx-text-fill: #34495e;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-        <ComboBox fx:id="categoryComboBox" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-        <Label fx:id="categoryError" style="-fx-text-fill: #e74c3c; -fx-font-size: 11px;"
+        <Label text="Category*:" styleClass="form-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="categoryComboBox" styleClass="form-field"
+                  GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+        <Label fx:id="categoryError" styleClass="error-label"
                GridPane.rowIndex="2" GridPane.columnIndex="1" GridPane.valignment="BOTTOM"/>
 
         <!-- Points Field -->
-        <Label text="Points requis*:" style="-fx-text-fill: #34495e;" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-        <TextField fx:id="pointsField" promptText="0" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-        <Label fx:id="pointsError" style="-fx-text-fill: #e74c3c; -fx-font-size: 11px;"
+        <Label text="Required Points*:" styleClass="form-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <TextField fx:id="pointsField" promptText="0-1000" styleClass="form-field"
+                   GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+        <Label fx:id="pointsError" styleClass="error-label"
                GridPane.rowIndex="3" GridPane.columnIndex="1" GridPane.valignment="BOTTOM"/>
 
         <!-- Premium Checkbox -->
-        <Label text="Premium:" style="-fx-text-fill: #34495e;" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-        <CheckBox fx:id="premiumCheckBox" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+        <Label text="Premium:" styleClass="form-label" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+        <CheckBox fx:id="premiumCheckBox" styleClass="form-checkbox"
+                  GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+        <!-- Published Checkbox -->
+        <Label text="Published:" styleClass="form-label" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+        <CheckBox fx:id="publishedCheckBox" styleClass="form-checkbox"
+                  GridPane.rowIndex="5" GridPane.columnIndex="1"/>
 
         <!-- Tutor Field -->
-        <Label text="Nom du tuteur*:" style="-fx-text-fill: #34495e;" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-        <TextField fx:id="tutorField" promptText="Nom du formateur" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
-        <Label fx:id="tutorError" style="-fx-text-fill: #e74c3c; -fx-font-size: 11px;"
-               GridPane.rowIndex="5" GridPane.columnIndex="1" GridPane.valignment="BOTTOM"/>
+        <Label text="Tutor*:" styleClass="form-label" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+        <TextField fx:id="tutorField" promptText="Tutor name" styleClass="form-field"
+                   GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+        <Label fx:id="tutorError" styleClass="error-label"
+               GridPane.rowIndex="6" GridPane.columnIndex="1" GridPane.valignment="BOTTOM"/>
     </GridPane>
 
-    <!-- Buttons -->
-    <HBox spacing="15" alignment="CENTER_RIGHT" style="-fx-padding: 10 0 0 0;">
-        <Button text="Annuler" onAction="#cancel"
-                style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-min-width: 100; -fx-cursor: hand;"/>
-        <Button text="Enregistrer" onAction="#saveCourse"
-                style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-min-width: 120; -fx-font-weight: bold; -fx-cursor: hand;"/>
+    <!-- Action Buttons -->
+    <HBox styleClass="form-buttons-container">
+        <Button text="Cancel" onAction="#handleCancel" styleClass="cancel-button">
+            <graphic>
+                <FontIcon iconLiteral="fas-times"/>
+            </graphic>
+        </Button>
+        <Button text="Save" onAction="#handleSave" styleClass="save-button">
+            <graphic>
+                <FontIcon iconLiteral="fas-save"/>
+            </graphic>
+        </Button>
     </HBox>
 
     <!-- Required fields note -->
-    <Label text="* Champs obligatoires" style="-fx-text-fill: #7f8c8d; -fx-font-size: 11px; -fx-padding: 10 0 0 0;"/>
+    <Label text="* Required fields" styleClass="required-note"/>
 </VBox>
